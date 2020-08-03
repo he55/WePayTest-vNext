@@ -7,6 +7,7 @@ static int tweakMode;
 static NSString *lastFixedAmountQRCode;
 static NSArray<NSString *> *orderStrings;
 
+
 static void pay() {
     NSString *sid = @"";
     NSString *code = @"";
