@@ -11,6 +11,3 @@ WePay_FILES = Tweak.x
 WePay_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk
-
-SUBPROJECTS += wepayd
-include $(THEOS_MAKE_PATH)/aggregate.mk
