@@ -1,5 +1,3 @@
-#include <notify.h>
-
 #import "header.h"
 #import "CAppViewControllerManager.h"
 #import "WCUIAlertView.h"
@@ -9,25 +7,6 @@ static int tweakMode;
 static NSString *lastFixedAmountQRCode;
 static NSMutableArray<NSString *> *orderStrings;
 
-static void notificationCallback(CFNotificationCenterRef center,
-                                 void *observer,
-                                 CFStringRef name,
-                                 const void *object,
-                                 CFDictionaryRef userInfo) {
-    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    if (!pasteboard.hasStrings) {
-        return;
-    }
-
-    orderStrings = [[pasteboard.string componentsSeparatedByString:@"::"] mutableCopy];
-    if (![orderStrings.firstObject isEqualToString:@"werq"]) {
-        return;
-    }
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:orderStrings[2] Description:orderStrings[1]];
-    });
-}
 
 static void saveOrderLog(NSString *order) {
     static NSString *logPath = nil;
@@ -40,7 +19,6 @@ static void saveOrderLog(NSString *order) {
     [outputStream open];
 
     NSData *data = [[NSString stringWithFormat:@"%@\n", order] dataUsingEncoding:NSUTF8StringEncoding];
-
     [outputStream write:data.bytes maxLength:data.length];
     [outputStream close];
 }
@@ -51,15 +29,7 @@ static void saveOrderLog(NSString *order) {
 - (id)initWithData:(id)arg1 {
     if (!wcPayFacingReceiveContorlLogic) {
         wcPayFacingReceiveContorlLogic = self;
-
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(),
-                                        NULL,
-                                        notificationCallback,
-                                        CFSTR("com.hwz.wepay.makeOrder"),
-                                        NULL,
-                                        CFNotificationSuspensionBehaviorDrop);
     }
-
     return %orig;
 }
 
@@ -107,7 +77,7 @@ static void saveOrderLog(NSString *order) {
 
 - (void)onSessionTotalUnreadCountChange:(unsigned int)arg1 {
     %orig;
-    notify_post("com.hwz.wepay.unreadCountChange");
+    //
 }
 
 %end
