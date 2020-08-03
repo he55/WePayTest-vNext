@@ -6,6 +6,7 @@ using WePayServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System;
 
 namespace WePayServer.Controllers
 {
@@ -34,21 +35,22 @@ namespace WePayServer.Controllers
         private static readonly List<WePayOrderDto> WePayOrderDtos = new List<WePayOrderDto>();
 
         [HttpGet("/wepay")]
-        public IActionResult WePay(string? sid, string? code)
+        public IActionResult WePay(long? sid, string? code)
         {
-            if (!string.IsNullOrEmpty(sid) && !string.IsNullOrEmpty(code))
+            if (!string.IsNullOrEmpty(code))
             {
-                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.OrderId == sid).FirstOrDefault();
+                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.Id == sid).FirstOrDefault();
                 if (wePayOrderDto != null)
                 {
                     wePayOrderDto.OrderCode = code;
                 }
             }
 
-            WePayOrderDto wePayOrderDto1 = WePayOrderDtos.Where(x => x.OrderCode == "").FirstOrDefault();
+            WePayOrderDto wePayOrderDto1 = WePayOrderDtos.Where(x => x.OrderCode == "" && !x.IsSend).FirstOrDefault();
             if (wePayOrderDto1 != null)
             {
-                return Content($"{wePayOrderDto1.OrderId}::{wePayOrderDto1.OrderId}::{wePayOrderDto1.OrderAmount}");
+                wePayOrderDto1.IsSend = true;
+                return Content($"{wePayOrderDto1.Id}::{wePayOrderDto1.OrderId}::{wePayOrderDto1.OrderAmount}");
             }
             return NoContent();
         }
@@ -96,12 +98,14 @@ namespace WePayServer.Controllers
             }
 
             string? orderCode = null;
+
+            order.Id = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             WePayOrderDtos.Add(order);
 
             for (int i = 0; i < 10; i++)
             {
                 await Task.Delay(1_000);
-                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.OrderId == order.OrderId && x.OrderCode != "").FirstOrDefault();
+                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.Id == order.Id && x.OrderCode != "").FirstOrDefault();
                 if (wePayOrderDto != null)
                 {
                     orderCode = wePayOrderDto.OrderCode;
