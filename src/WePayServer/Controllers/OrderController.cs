@@ -5,6 +5,7 @@ using WePayServer.Models;
 using WePayServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace WePayServer.Controllers
 {
@@ -28,6 +29,28 @@ namespace WePayServer.Controllers
         {
             _orderService.RequestExecute();
             return this.ResultSuccess(null, 0, "ok");
+        }
+
+        private static readonly List<WePayOrderDto> WePayOrderDtos = new List<WePayOrderDto>();
+
+        [HttpGet("/wepay")]
+        public IActionResult WePay(string? sid, string? code)
+        {
+            if (!string.IsNullOrEmpty(sid) && !string.IsNullOrEmpty(code))
+            {
+                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.OrderId == sid).FirstOrDefault();
+                if (wePayOrderDto != null)
+                {
+                    wePayOrderDto.OrderCode = code;
+                }
+            }
+
+            WePayOrderDto wePayOrderDto1 = WePayOrderDtos.Where(x => x.OrderCode == "").FirstOrDefault();
+            if (wePayOrderDto1 != null)
+            {
+                return Content($"{wePayOrderDto1.OrderId}::{wePayOrderDto1.OrderId}::{wePayOrderDto1.OrderAmount}");
+            }
+            return NoContent();
         }
 
         [HttpGet("{orderId}")]
@@ -72,12 +95,22 @@ namespace WePayServer.Controllers
                 return this.ResultFail("订单号已经存在");
             }
 
-            string orderCode;
-            try
+            string? orderCode = null;
+            WePayOrderDtos.Add(order);
+
+            for (int i = 0; i < 10; i++)
             {
-                orderCode = await _wechatService.CreateOrderAsync(order.OrderId, order.OrderAmount);
+                await Task.Delay(1_000);
+                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.OrderId == order.OrderId && x.OrderCode != "").FirstOrDefault();
+                if (wePayOrderDto != null)
+                {
+                    orderCode = wePayOrderDto.OrderCode;
+                    break;
+                }
             }
-            catch
+            WePayOrderDtos.Remove(order);
+
+            if (orderCode == null)
             {
                 return this.ResultFail("服务器内部错误，调用订单生成接口失败");
             }
