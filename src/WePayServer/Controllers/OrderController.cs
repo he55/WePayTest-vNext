@@ -6,7 +6,6 @@ using WePayServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System;
 
 namespace WePayServer.Controllers
 {
@@ -17,6 +16,8 @@ namespace WePayServer.Controllers
         private readonly WePayContext _context;
         private readonly WeChatService _wechatService;
         private readonly OrderService _orderService;
+
+        private static readonly List<WePayOrder> WePayOrders = new List<WePayOrder>();
 
         public OrderController(WePayContext context, WeChatService wechatService, OrderService orderService)
         {
@@ -32,25 +33,23 @@ namespace WePayServer.Controllers
             return this.ResultSuccess(null, 0, "ok");
         }
 
-        private static readonly List<WePayOrderDto> WePayOrderDtos = new List<WePayOrderDto>();
-
         [HttpGet("/wepay")]
         public IActionResult WePay(long? sid, string? code)
         {
             if (!string.IsNullOrEmpty(code))
             {
-                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.Id == sid).FirstOrDefault();
-                if (wePayOrderDto != null)
+                WePayOrder wePayOrder = WePayOrders.Where(x => x.Id == sid).FirstOrDefault();
+                if (wePayOrder != null)
                 {
-                    wePayOrderDto.OrderCode = code;
+                    wePayOrder.OrderCode = code;
+                    WePayOrders.Remove(wePayOrder);
                 }
             }
 
-            WePayOrderDto wePayOrderDto1 = WePayOrderDtos.Where(x => x.OrderCode == "" && !x.IsSend).FirstOrDefault();
-            if (wePayOrderDto1 != null)
+            WePayOrder wePayOrder1 = WePayOrders.Where(x => x.OrderCode == "").FirstOrDefault();
+            if (wePayOrder1 != null)
             {
-                wePayOrderDto1.IsSend = true;
-                return Content($"{wePayOrderDto1.Id}::{wePayOrderDto1.OrderId}::{wePayOrderDto1.OrderAmount}");
+                return Content($"{wePayOrder1.Id}::{wePayOrder1.OrderId}::{wePayOrder1.OrderAmount}");
             }
             return NoContent();
         }
@@ -92,44 +91,34 @@ namespace WePayServer.Controllers
                 return this.ResultFail("参数错误，订单号长度不能为 0");
             }
 
-            if (await _context.WePayOrders.AnyAsync(o => o.OrderId == order.OrderId))
+            if (await _context.WePayOrders.AnyAsync(x => x.OrderId == order.OrderId && x.OrderCode != ""))
             {
                 return this.ResultFail("订单号已经存在");
             }
 
-            string? orderCode = null;
 
-            order.Id = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            WePayOrderDtos.Add(order);
+            WePayOrder wePayOrder = new WePayOrder
+            {
+                OrderId = order.OrderId,
+                OrderAmount = order.OrderAmount
+            };
+            _context.WePayOrders.Add(wePayOrder);
+
+            await _context.SaveChangesAsync();
+
+            WePayOrders.Add(wePayOrder);
 
             for (int i = 0; i < 10; i++)
             {
                 await Task.Delay(1_000);
-                WePayOrderDto wePayOrderDto = WePayOrderDtos.Where(x => x.Id == order.Id && x.OrderCode != "").FirstOrDefault();
-                if (wePayOrderDto != null)
+                if (wePayOrder.OrderCode != "")
                 {
-                    orderCode = wePayOrderDto.OrderCode;
-                    break;
+                    await _context.SaveChangesAsync();
+                    return this.ResultSuccess(wePayOrder);
                 }
             }
-            WePayOrderDtos.Remove(order);
 
-            if (orderCode == null)
-            {
-                return this.ResultFail("服务器内部错误，调用订单生成接口失败");
-            }
-
-            order.OrderCode = orderCode;
-
-            _context.WePayOrders.Add(new WePayOrder
-            {
-                OrderId = order.OrderId,
-                OrderAmount = order.OrderAmount,
-                OrderCode = orderCode
-            });
-            await _context.SaveChangesAsync();
-
-            return this.ResultSuccess(order);
+            return this.ResultFail("服务器内部错误，调用订单生成接口失败");
         }
     }
 }
