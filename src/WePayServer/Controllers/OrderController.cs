@@ -86,7 +86,7 @@ namespace WePayServer.Controllers
                 return this.ResultFail("参数错误，订单号长度不能为 0");
             }
 
-            if (await _context.WePayOrders.AnyAsync(x => x.OrderId == order.OrderId && x.OrderCode != ""))
+            if (await _context.WePayOrders.AnyAsync(x => x.OrderId == order.OrderId))
             {
                 return this.ResultFail("订单号已经存在");
             }
@@ -112,6 +112,9 @@ namespace WePayServer.Controllers
                     return this.ResultSuccess(wePayOrder);
                 }
             }
+
+            wePayOrder.IsDeleted = true;
+            await _context.SaveChangesAsync();
 
             return this.ResultFail("服务器内部错误，调用订单生成接口失败");
         }

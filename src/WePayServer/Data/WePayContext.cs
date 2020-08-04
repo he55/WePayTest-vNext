@@ -58,7 +58,6 @@ namespace WePayServer.Data
                 x.ToTable("WePay_Message");
                 x.HasIndex(m => m.Id).IsUnique();
                 x.HasIndex(m => m.MessageId).IsUnique();
-                x.HasIndex(m => m.OrderId);
                 x.HasQueryFilter(m => !m.IsDeleted);
             });
 
@@ -66,7 +65,6 @@ namespace WePayServer.Data
             {
                 x.ToTable("WePay_Order");
                 x.HasIndex(m => m.Id).IsUnique();
-                x.HasIndex(m => m.OrderId).IsUnique();
                 x.HasQueryFilter(m => !m.IsDeleted);
             });
         }
