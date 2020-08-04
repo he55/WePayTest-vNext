@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,48 +53,28 @@ namespace WePayServer.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // WePayMessage
-            modelBuilder.Entity<WePayMessage>()
-                .ToTable("WePay_Message");
+            modelBuilder.Entity<WePayMessage>(x =>
+            {
+                x.ToTable("WePay_Message");
+                x.HasIndex(m => m.Id).IsUnique();
+                x.HasIndex(m => m.MessageId).IsUnique();
+                x.HasIndex(m => m.OrderId);
+                x.HasQueryFilter(m => !m.IsDeleted);
+            });
 
-            modelBuilder.Entity<WePayMessage>()
-                .HasIndex(m => m.Id)
-                .IsUnique();
-
-            modelBuilder.Entity<WePayMessage>()
-                .HasIndex(m => m.MessageId)
-                .IsUnique();
-
-            modelBuilder.Entity<WePayMessage>()
-                .HasIndex(m => m.MessageCreateTime);
-
-            modelBuilder.Entity<WePayMessage>()
-                .HasIndex(m => m.OrderId);
-
-            modelBuilder.Entity<WePayMessage>()
-                .HasQueryFilter(m => !m.IsDeleted);
-
-
-            // WePayOrder
-            modelBuilder.Entity<WePayOrder>()
-                .ToTable("WePay_Order");
-
-            modelBuilder.Entity<WePayOrder>()
-                .HasIndex(m => m.Id)
-                .IsUnique();
-
-            modelBuilder.Entity<WePayOrder>()
-                .HasIndex(m => m.OrderId)
-                .IsUnique();
-
-            modelBuilder.Entity<WePayOrder>()
-                .HasQueryFilter(m => !m.IsDeleted);
+            modelBuilder.Entity<WePayOrder>(x =>
+            {
+                x.ToTable("WePay_Order");
+                x.HasIndex(m => m.Id).IsUnique();
+                x.HasIndex(m => m.OrderId).IsUnique();
+                x.HasQueryFilter(m => !m.IsDeleted);
+            });
         }
     }
 
     public class ModelBase
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public long CreateTime { get; set; }
         public long UpdateTime { get; set; }
         public bool IsDeleted { get; set; }
@@ -111,9 +92,9 @@ namespace WePayServer.Data
 
     public class WePayOrder : ModelBase
     {
-        public string OrderId { get; set; } = null!;
+        public string OrderId { get; set; } = "";
         public decimal OrderAmount { get; set; }
-        public string OrderCode { get; set; } = null!;
+        public string OrderCode { get; set; } = "";
         public bool OrderIsPay { get; set; }
     }
 }
