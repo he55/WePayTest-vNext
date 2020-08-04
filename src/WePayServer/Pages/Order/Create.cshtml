@@ -97,15 +97,13 @@
                 return
             }
 
-            orderId = document.getElementById('orderId').value
-
             fetch('/api/order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    orderId: orderId,
+                    orderId: document.getElementById('orderId').value,
                     orderAmount: parseFloat(document.getElementById('orderAmount').value),
                 })
             }).then(response => {
@@ -116,6 +114,8 @@
                     $('#tipModal').modal()
                     return
                 }
+
+                orderId = json.result.id
 
                 qrcode.innerHTML = ''
                 amount.innerHTML = '￥ ' + json.result.orderAmount.toFixed(2)
@@ -135,7 +135,6 @@
                 $('#tipModal').modal()
             })
         })
-
 
         document.getElementById('isPay').addEventListener('click', () => {
             fetch('/api/order/' + orderId)
