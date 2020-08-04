@@ -54,16 +54,11 @@ namespace WePayServer.Controllers
             return NoContent();
         }
 
-        [HttpGet("{orderId}")]
-        public async Task<ResultModel> GetOrderAsync(string orderId)
+        [HttpGet("{id:long}")]
+        public async Task<ResultModel> GetOrderAsync(long id)
         {
-            if (orderId.Length == 0)
-            {
-                return this.ResultFail("参数错误，订单号长度不能为 0");
-            }
-
             WePayOrder order = await _context.WePayOrders
-                .Where(m => m.OrderId == orderId)
+                .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
             if (order == null)
             {
