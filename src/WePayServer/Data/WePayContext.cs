@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,7 +54,7 @@ namespace WePayServer.Data
         {
             modelBuilder.Entity<WePayMessage>(x =>
             {
-                x.ToTable("WePay_Message");
+                x.ToTable("Message");
                 x.HasIndex(m => m.Id).IsUnique();
                 x.HasIndex(m => m.MessageId).IsUnique();
                 x.HasQueryFilter(m => !m.IsDeleted);
@@ -63,7 +62,7 @@ namespace WePayServer.Data
 
             modelBuilder.Entity<WePayOrder>(x =>
             {
-                x.ToTable("WePay_Order");
+                x.ToTable("Order");
                 x.HasIndex(m => m.Id).IsUnique();
                 x.HasQueryFilter(m => !m.IsDeleted);
             });
