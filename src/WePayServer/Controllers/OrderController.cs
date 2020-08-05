@@ -14,15 +14,13 @@ namespace WePayServer.Controllers
     public class OrderController : ControllerBase
     {
         private readonly WePayContext _context;
-        private readonly WeChatService _wechatService;
         private readonly OrderService _orderService;
 
         private static readonly List<WePayOrder> WePayOrders = new List<WePayOrder>();
 
-        public OrderController(WePayContext context, WeChatService wechatService, OrderService orderService)
+        public OrderController(WePayContext context, OrderService orderService)
         {
             _context = context;
-            _wechatService = wechatService;
             _orderService = orderService;
         }
 
@@ -98,25 +96,20 @@ namespace WePayServer.Controllers
                 OrderAmount = order.OrderAmount
             };
             _context.WePayOrders.Add(wePayOrder);
-
             await _context.SaveChangesAsync();
 
             WePayOrders.Add(wePayOrder);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
-                await Task.Delay(1_000);
+                await Task.Delay(300);
                 if (wePayOrder.OrderCode != "")
                 {
                     await _context.SaveChangesAsync();
                     return this.ResultSuccess(wePayOrder);
                 }
             }
-
-            wePayOrder.IsDeleted = true;
-            await _context.SaveChangesAsync();
-
-            return this.ResultFail("服务器内部错误，调用订单生成接口失败");
+            return this.ResultFail("订单生成失败");
         }
     }
 }
