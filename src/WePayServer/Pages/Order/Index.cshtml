@@ -63,7 +63,7 @@
                     }
                 </td>
                 <td>
-                    @DateTimeOffset.FromUnixTimeMilliseconds(item.CreateTime).LocalDateTime
+                    @DateTimeOffset.FromUnixTimeMilliseconds(item.CreateTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
                 </td>
                 <td>
                     <a asp-page="./Details" asp-route-id="@item.Id">明细</a> |

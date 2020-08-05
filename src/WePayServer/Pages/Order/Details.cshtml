@@ -45,13 +45,13 @@
             创建时间
         </dt>
         <dd class="col-sm-10">
-            @DateTimeOffset.FromUnixTimeMilliseconds(Model.WePayOrder.CreateTime).LocalDateTime
+            @DateTimeOffset.FromUnixTimeMilliseconds(Model.WePayOrder.CreateTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
         </dd>
         <dt class="col-sm-2">
             更新时间
         </dt>
         <dd class="col-sm-10">
-            @DateTimeOffset.FromUnixTimeMilliseconds(Model.WePayOrder.UpdateTime).LocalDateTime
+            @DateTimeOffset.FromUnixTimeMilliseconds(Model.WePayOrder.UpdateTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
         </dd>
     </dl>
 </div>
