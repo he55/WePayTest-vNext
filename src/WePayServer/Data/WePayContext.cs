@@ -81,10 +81,10 @@ namespace WePayServer.Data
     public class WePayMessage : ModelBase
     {
         public int MessageCreateTime { get; set; }
-        public string MessageId { get; set; } = null!;
-        public string MessageContent { get; set; } = null!;
+        public string MessageId { get; set; } = "";
+        public string MessageContent { get; set; } = "";
         public int MessagePublishTime { get; set; }
-        public string OrderId { get; set; } = null!;
+        public string OrderId { get; set; } = "";
         public decimal OrderAmount { get; set; }
     }
 
