@@ -21,6 +21,9 @@
                 订单金额
             </th>
             <th>
+                生成状态
+            </th>
+            <th>
                 支付状态
             </th>
             <th>
@@ -38,6 +41,9 @@
                 </td>
                 <td>
                     @item.OrderAmount.ToString("F2")
+                </td>
+                <td>
+                    @(!string.IsNullOrEmpty(item.OrderCode) ? "已生成" : "未生成")
                 </td>
                 <td>
                     @if (item.IsPay)
