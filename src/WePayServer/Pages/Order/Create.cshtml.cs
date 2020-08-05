@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using WePayServer.Data;
+﻿using WePayServer.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
