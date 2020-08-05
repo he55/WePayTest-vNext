@@ -18,23 +18,5 @@ namespace WePayServer.Pages.Order
         {
             return Page();
         }
-
-        [BindProperty]
-        public WePayOrder WePayOrder { get; set; } = null!;
-
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            _context.WePayOrders.Add(WePayOrder);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
-        }
     }
 }
