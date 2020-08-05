@@ -21,7 +21,7 @@
                 订单金额
             </th>
             <th>
-                生成状态
+                Code
             </th>
             <th>
                 支付状态
@@ -43,7 +43,14 @@
                     @item.OrderAmount.ToString("F2")
                 </td>
                 <td>
-                    @(!string.IsNullOrEmpty(item.OrderCode) ? "已生成" : "未生成")
+                    @if (!string.IsNullOrEmpty(item.OrderCode))
+                    {
+                        <span style="color:green;">存在</span>
+                    }
+                    else
+                    {
+                        <span>不存在</span>
+                    }
                 </td>
                 <td>
                     @if (item.IsPay)
