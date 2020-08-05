@@ -97,7 +97,7 @@ namespace WePayServer.Services
                     continue;
                 }
 
-                order.OrderIsPay = true;
+                order.IsPay = true;
 
                 context.WePayMessages.Add(new WePayMessage
                 {

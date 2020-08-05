@@ -63,7 +63,7 @@ namespace WePayServer.Controllers
                 return this.ResultFail("没有找到指定订单");
             }
 
-            if (!order.OrderIsPay)
+            if (!order.IsPay)
             {
                 _orderService.RequestExecute();
             }

@@ -64,6 +64,7 @@ namespace WePayServer.Data
             {
                 x.ToTable("Order");
                 x.HasIndex(m => m.Id).IsUnique();
+                x.HasIndex(m => m.OrderId).IsUnique();
                 x.HasQueryFilter(m => !m.IsDeleted);
             });
         }
@@ -92,6 +93,6 @@ namespace WePayServer.Data
         public string OrderId { get; set; } = "";
         public decimal OrderAmount { get; set; }
         public string OrderCode { get; set; } = "";
-        public bool OrderIsPay { get; set; }
+        public bool IsPay { get; set; }
     }
 }
