@@ -105,7 +105,25 @@ static void saveOrderLog(NSString *order) {
 
 - (void)onSessionTotalUnreadCountChange:(unsigned int)arg1 {
     %orig;
-    //
+
+    NSURL *url = [NSURL URLWithString:@""];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    request.HTTPMethod = @"POST";
+    [request setValue:@"" forHTTPHeaderField:@""];
+
+    NSDictionary *json = @{
+
+    };
+
+    NSData *data = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:nil];
+    request.HTTPBody = data;
+
+    NSURLSession *session = [NSURLSession sharedSession];
+
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+
+    }];
+    [task resume];
 }
 
 %end
