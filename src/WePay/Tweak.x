@@ -5,34 +5,29 @@
 static WCPayFacingReceiveContorlLogic *wcPayFacingReceiveContorlLogic;
 static int tweakMode;
 static NSString *lastFixedAmountQRCode;
-static NSArray<NSString *> *orderStrings;
+static NSMutableDictionary *wePayOrder;
 
 
 static void pay() {
     NSString *sid = @"";
     NSString *code = @"";
 
-    if (orderStrings && orderStrings.count == 4) {
-        sid = orderStrings[0];
-        code = [orderStrings[3] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+    if (wePayOrder) {
+        sid = wePayOrder[@"id"];
+        code = [wePayOrder[@"orderCode"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
     }
-
-    orderStrings = nil;
-
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://192.168.0.101:5000/wepay?sid=%@&code=%@", sid, code]];
+    wePayOrder = nil;
 
     NSURLSession *session = [NSURLSession sharedSession];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://192.168.0.101:5000/wepay?sid=%@&code=%@", sid, code]];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (error || ((NSHTTPURLResponse *)response).statusCode != 200) {
                 return;
             }
 
-            NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            orderStrings = [content componentsSeparatedByString:@"::"];
-            if (orderStrings.count == 3) {
-                [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:orderStrings[2] Description:orderStrings[1]];
-            }
+            wePayOrder = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:wePayOrder[@"orderAmount"] Description:wePayOrder[@"orderId"]];
         });
     }];
     [dataTask resume];
@@ -72,11 +67,9 @@ static void saveOrderLog(NSString *order) {
     lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
 
     if (tweakMode == 0) {
-        NSMutableArray *tmp = [orderStrings mutableCopy];
-        [tmp addObject:lastFixedAmountQRCode];
-        orderStrings = tmp;
+        wePayOrder[@"orderCode"] = lastFixedAmountQRCode;
+        saveOrderLog([wePayOrder description]);
 
-        saveOrderLog([orderStrings componentsJoinedByString:@"::"]);
         [self stopLoading];
     } else if (tweakMode == 1) {
         tweakMode = 0;
@@ -109,7 +102,7 @@ static void saveOrderLog(NSString *order) {
     NSURL *url = [NSURL URLWithString:@""];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
-    [request setValue:@"" forHTTPHeaderField:@""];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 
     NSDictionary *json = @{
 
