@@ -12,7 +12,7 @@ static void pay() {
     NSString *sid = @"";
     NSString *code = @"";
 
-    if (wePayOrder) {
+    if (wePayOrder && [wePayOrder[@"orderCode"] hasPrefix:@"wxp://"]) {
         sid = wePayOrder[@"id"];
         code = [wePayOrder[@"orderCode"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
     }
@@ -21,12 +21,12 @@ static void pay() {
     NSURLSession *session = [NSURLSession sharedSession];
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://192.168.0.101:5000/wepay?sid=%@&code=%@", sid, code]];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (error || ((NSHTTPURLResponse *)response).statusCode != 200) {
-                return;
-            }
+        if (((NSHTTPURLResponse *)response).statusCode != 200) {
+            return;
+        }
 
-            wePayOrder = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        wePayOrder = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
             [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:wePayOrder[@"orderAmount"] Description:wePayOrder[@"orderId"]];
         });
     }];
