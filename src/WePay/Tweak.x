@@ -98,6 +98,7 @@ static void saveOrderLog(NSString *order) {
 
 - (void)onSessionTotalUnreadCountChange:(unsigned int)arg1 {
     %orig;
+    return;
 
     NSURL *url = [NSURL URLWithString:@""];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
