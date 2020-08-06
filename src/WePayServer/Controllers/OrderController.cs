@@ -32,7 +32,7 @@ namespace WePayServer.Controllers
         }
 
         [HttpGet("/wepay")]
-        public IActionResult WePay(long? sid, string? code)
+        public ActionResult<WePayOrder> WePay(long? sid, string? code)
         {
             if (!string.IsNullOrEmpty(code))
             {
@@ -47,7 +47,7 @@ namespace WePayServer.Controllers
             WePayOrder wePayOrder1 = WePayOrders.Where(x => x.OrderCode == "").FirstOrDefault();
             if (wePayOrder1 != null)
             {
-                return Content($"{wePayOrder1.Id}::{wePayOrder1.OrderId}::{wePayOrder1.OrderAmount}");
+                return wePayOrder1;
             }
             return NoContent();
         }
