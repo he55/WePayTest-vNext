@@ -31,7 +31,7 @@ namespace WePayServer.Controllers
             return this.ResultSuccess(null, 0, "ok");
         }
 
-        [HttpGet("/wepay")]
+        [HttpPost("/wepay")]
         public ActionResult<WePayOrder> WePay(long? sid, string? code)
         {
             if (!string.IsNullOrEmpty(code))

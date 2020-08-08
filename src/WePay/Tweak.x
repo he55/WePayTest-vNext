@@ -9,19 +9,21 @@ static NSMutableDictionary *wePayOrder;
 
 
 static void pay() {
-    NSString *sid = @"";
-    NSString *code = @"";
+    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/wepay"];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    request.HTTPMethod = @"POST";
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 
     if (wePayOrder && [wePayOrder[@"orderCode"] hasPrefix:@"wxp://"]) {
-        sid = wePayOrder[@"id"];
-        code = [wePayOrder[@"orderCode"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:@{@"id": wePayOrder[@"id"], @"orderCode": wePayOrder[@"orderCode"]} options:kNilOptions error:nil];
+        request.HTTPBody = data;
+        wePayOrder = nil;
     }
-    wePayOrder = nil;
 
     NSURLSession *session = [NSURLSession sharedSession];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://192.168.0.101:5000/wepay?sid=%@&code=%@", sid, code]];
-    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (((NSHTTPURLResponse *)response).statusCode != 200) {
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
+        if (res.statusCode != 200) {
             return;
         }
 
