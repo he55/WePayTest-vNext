@@ -31,15 +31,21 @@ namespace WePayServer.Controllers
             return this.ResultSuccess(null, 0, "ok");
         }
 
-        [HttpPost("/wepay")]
-        public ActionResult<WePayOrder> WePay(long? sid, string? code)
+        public class OrderCodeDto
         {
-            if (!string.IsNullOrEmpty(code))
+            public long Id { get; set; }
+            public string OrderCode { get; set; } = "";
+        }
+
+        [HttpPost("/wepay")]
+        public ActionResult<WePayOrder> WePay(OrderCodeDto? orderCodeDto)
+        {
+            if (orderCodeDto != null)
             {
-                WePayOrder wePayOrder = WePayOrders.Where(x => x.Id == sid).FirstOrDefault();
+                WePayOrder wePayOrder = WePayOrders.Where(x => x.Id == orderCodeDto.Id).FirstOrDefault();
                 if (wePayOrder != null)
                 {
-                    wePayOrder.OrderCode = code;
+                    wePayOrder.OrderCode = orderCodeDto.OrderCode;
                     WePayOrders.Remove(wePayOrder);
                 }
             }
