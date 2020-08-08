@@ -38,9 +38,9 @@ namespace WePayServer.Controllers
         }
 
         [HttpPost("/wepay")]
-        public ActionResult<WePayOrder> WePay(OrderCodeDto? orderCodeDto)
+        public ActionResult<WePayOrder> WePay(OrderCodeDto orderCodeDto)
         {
-            if (orderCodeDto != null)
+            if (orderCodeDto.Id != 0)
             {
                 WePayOrder wePayOrder = WePayOrders.Where(x => x.Id == orderCodeDto.Id).FirstOrDefault();
                 if (wePayOrder != null)
