@@ -9,16 +9,17 @@ static NSMutableDictionary *wePayOrder;
 
 
 static void pay() {
+    NSDictionary *json = @{};
+    if (wePayOrder && [wePayOrder[@"orderCode"] hasPrefix:@"wxp://"]) {
+        json = @{@"id": wePayOrder[@"id"], @"orderCode": wePayOrder[@"orderCode"]};
+        wePayOrder = nil;
+    }
+
     NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/wepay"];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-
-    if (wePayOrder && [wePayOrder[@"orderCode"] hasPrefix:@"wxp://"]) {
-        NSData *data = [NSJSONSerialization dataWithJSONObject:@{@"id": wePayOrder[@"id"], @"orderCode": wePayOrder[@"orderCode"]} options:kNilOptions error:nil];
-        request.HTTPBody = data;
-        wePayOrder = nil;
-    }
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:nil];
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
