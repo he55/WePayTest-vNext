@@ -34,7 +34,7 @@ static void pay() {
 }
 
 
-static void saveOrderLog(NSString *order) {
+static void saveOrderLog(NSString *log) {
     static NSString *logPath = nil;
     if (!logPath) {
         NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
@@ -44,7 +44,7 @@ static void saveOrderLog(NSString *order) {
     NSOutputStream *outputStream = [[NSOutputStream alloc] initToFileAtPath:logPath append:YES];
     [outputStream open];
 
-    NSData *data = [[NSString stringWithFormat:@"%@\n", order] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *data = [[NSString stringWithFormat:@"%@\n\n", log] dataUsingEncoding:NSUTF8StringEncoding];
     [outputStream write:data.bytes maxLength:data.length];
     [outputStream close];
 }
