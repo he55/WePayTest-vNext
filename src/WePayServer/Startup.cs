@@ -1,4 +1,3 @@
-using System;
 using WePayServer.Data;
 using WePayServer.Services;
 using Microsoft.AspNetCore.Builder;
@@ -27,12 +26,6 @@ namespace WePayServer
 
             services.AddDbContextPool<WePayContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("sqlite")));
-
-            services.AddHttpClient("wepayd", httpClient =>
-            {
-                httpClient.BaseAddress = new Uri(Configuration.GetValue<string>("WePayd:Url"));
-                httpClient.Timeout = TimeSpan.FromSeconds(3.0);
-            });
 
             services.AddSingleton<WeChatService>();
         }

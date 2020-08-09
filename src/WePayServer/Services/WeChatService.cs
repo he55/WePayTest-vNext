@@ -1,33 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Xml;
-using WePayServer.Models;
 
 namespace WePayServer.Services
 {
     public class WeChatService
     {
-        private readonly HttpClient _httpClient;
-
-        public WeChatService(IHttpClientFactory httpClientFactory)
-        {
-            _httpClient = httpClientFactory.CreateClient("wepayd");
-        }
-
-        public async Task<WePayMessageDto[]> GetMessagesAsync(int timestamp)
-        {
-            return await JsonSerializer.DeserializeAsync<WePayMessageDto[]>(
-                await _httpClient.GetStreamAsync($"api/messages?t={timestamp}"),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        }
-
-        public async Task<string> CreateOrderAsync(string orderId, decimal orderAmount)
-        {
-            return await _httpClient.GetStringAsync($"api/make_order?orderId={orderId}&orderAmount={orderAmount}");
-        }
-
         public Dictionary<string, string> GetMessageInfo(string xmlMessage)
         {
             XmlDocument xmlDocument = new XmlDocument();
@@ -39,7 +16,7 @@ namespace WePayServer.Services
                 return xmlNode == null ? "" : xmlNode.InnerText;
             }
 
-            Dictionary<string, string> messageInfo = new Dictionary<string, string>
+            return new Dictionary<string, string>
             {
                 ["fromusername"] = GetNodeValueString("/msg/fromusername"),
                 ["appmsg_title"] = GetNodeValueString("/msg/appmsg/title"),
@@ -69,8 +46,6 @@ namespace WePayServer.Services
                 ["detail_content_key_3"] = GetNodeValueString("/msg/appmsg/mmreader/template_detail/line_content/lines/line[3]/key/word"),
                 ["detail_content_value_3"] = GetNodeValueString("/msg/appmsg/mmreader/template_detail/line_content/lines/line[3]/value/word")
             };
-
-            return messageInfo;
         }
     }
 }
