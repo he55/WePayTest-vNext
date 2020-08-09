@@ -53,7 +53,7 @@ namespace WePayServer.Controllers
                 }
             }
 
-            WePayOrder order = WePayOrders.Where(x => x.OrderCode == "").FirstOrDefault();
+            WePayOrder order = WePayOrders.Where(x => string.IsNullOrEmpty(x.OrderCode)).FirstOrDefault();
             if (order != null)
             {
                 return order;
@@ -126,7 +126,7 @@ namespace WePayServer.Controllers
             for (int i = 0; i < 20; i++)
             {
                 await Task.Delay(300);
-                if (wePayOrder.OrderCode != "")
+                if (!string.IsNullOrEmpty(wePayOrder.OrderCode))
                 {
                     await _context.SaveChangesAsync();
                     return this.ResultSuccess(wePayOrder);
