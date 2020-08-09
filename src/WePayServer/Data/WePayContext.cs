@@ -13,7 +13,6 @@ namespace WePayServer.Data
         {
         }
 
-        public DbSet<WePayMessage> WePayMessages { get; set; } = null!;
         public DbSet<WePayOrder> WePayOrders { get; set; } = null!;
 
         /// <inheritdoc />
@@ -52,14 +51,6 @@ namespace WePayServer.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WePayMessage>(x =>
-            {
-                x.ToTable("Message");
-                x.HasIndex(m => m.Id).IsUnique();
-                x.HasIndex(m => m.MessageId).IsUnique();
-                x.HasQueryFilter(m => !m.IsDeleted);
-            });
-
             modelBuilder.Entity<WePayOrder>(x =>
             {
                 x.ToTable("Order");
@@ -76,16 +67,6 @@ namespace WePayServer.Data
         public long CreateTime { get; set; }
         public long UpdateTime { get; set; }
         public bool IsDeleted { get; set; }
-    }
-
-    public class WePayMessage : ModelBase
-    {
-        public int MessageCreateTime { get; set; }
-        public string MessageId { get; set; } = "";
-        public string MessageContent { get; set; } = "";
-        public int MessagePublishTime { get; set; }
-        public string OrderId { get; set; } = "";
-        public decimal OrderAmount { get; set; }
     }
 
     public class WePayOrder : ModelBase
