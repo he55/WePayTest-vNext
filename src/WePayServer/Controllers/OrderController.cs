@@ -53,10 +53,10 @@ namespace WePayServer.Controllers
                 }
             }
 
-            WePayOrder wePayOrder1 = WePayOrders.Where(x => x.OrderCode == "").FirstOrDefault();
-            if (wePayOrder1 != null)
+            WePayOrder order = WePayOrders.Where(x => x.OrderCode == "").FirstOrDefault();
+            if (order != null)
             {
-                return wePayOrder1;
+                return order;
             }
             return NoContent();
         }
