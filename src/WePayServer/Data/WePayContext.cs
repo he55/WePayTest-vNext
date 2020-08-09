@@ -93,6 +93,7 @@ namespace WePayServer.Data
         public string OrderId { get; set; } = "";
         public decimal OrderAmount { get; set; }
         public string OrderCode { get; set; } = "";
+        public string OrderMessage { get; set; } = "";
         public bool IsPay { get; set; }
     }
 }

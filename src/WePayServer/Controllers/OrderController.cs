@@ -6,6 +6,8 @@ using WePayServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace WePayServer.Controllers
 {
@@ -13,22 +15,23 @@ namespace WePayServer.Controllers
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
+        private readonly ILogger<OrderController> _logger;
+        private readonly IConfiguration _configuration;
         private readonly WePayContext _context;
-        private readonly OrderService _orderService;
+        private readonly WeChatService _wechatService;
 
         private static readonly List<WePayOrder> WePayOrders = new List<WePayOrder>();
 
-        public OrderController(WePayContext context, OrderService orderService)
+        public OrderController(
+            ILogger<OrderController> logger,
+            IConfiguration configuration,
+            WePayContext context,
+            WeChatService wechatService)
         {
+            _logger = logger;
+            _configuration = configuration;
             _context = context;
-            _orderService = orderService;
-        }
-
-        [HttpGet("/pull_order")]
-        public ResultModel PullOrder()
-        {
-            _orderService.RequestExecute();
-            return this.ResultSuccess(null, 0, "ok");
+            _wechatService = wechatService;
         }
 
         public class OrderCodeDto
@@ -58,6 +61,26 @@ namespace WePayServer.Controllers
             return NoContent();
         }
 
+        [HttpPost("/postorder")]
+        public async Task<ResultModel> PostOrder(WePayMessageDto messageDto)
+        {
+            Dictionary<string, string> messageInfo = _wechatService.GetMessageInfo(messageDto.Message);
+            string orderId = messageInfo["detail_content_value_1"];
+
+            WePayOrder order = await _context.WePayOrders
+                .Where(x => x.OrderId == orderId)
+                .FirstOrDefaultAsync();
+            if (order == null)
+            {
+                return this.ResultFail("找不到对应订单");
+            }
+
+            order.IsPay = true;
+            order.OrderMessage = messageDto.Message;
+            await _context.SaveChangesAsync();
+            return this.ResultSuccess(null);
+        }
+
         [HttpGet("{id:long}")]
         public async Task<ResultModel> GetOrderAsync(long id)
         {
@@ -68,12 +91,6 @@ namespace WePayServer.Controllers
             {
                 return this.ResultFail("没有找到指定订单");
             }
-
-            if (!order.IsPay)
-            {
-                _orderService.RequestExecute();
-            }
-
             return this.ResultSuccess(order);
         }
 
