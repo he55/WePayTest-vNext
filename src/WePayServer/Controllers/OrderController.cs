@@ -70,14 +70,13 @@ namespace WePayServer.Controllers
             WePayOrder order = await _context.WePayOrders
                 .Where(x => x.OrderId == orderId)
                 .FirstOrDefaultAsync();
-            if (order == null)
+            if (order != null)
             {
-                return this.ResultFail("找不到对应订单");
+                order.IsPay = true;
+                order.OrderMessage = messageDto.Message;
+                await _context.SaveChangesAsync();
             }
 
-            order.IsPay = true;
-            order.OrderMessage = messageDto.Message;
-            await _context.SaveChangesAsync();
             return this.ResultSuccess(null);
         }
 
