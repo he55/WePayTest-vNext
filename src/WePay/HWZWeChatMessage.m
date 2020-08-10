@@ -20,7 +20,6 @@
 
     static NSString * sql = @"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE MesSvrID = ?";
     FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:sql, HWZTableName], messageId];
-
     if (!resultSet) {
         return nil;
     }
@@ -49,7 +48,6 @@
 
     static NSString * sql = @"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime";
     FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:sql, HWZTableName], @(timestamp)];
-
     if (!resultSet) {
         return nil;
     }
