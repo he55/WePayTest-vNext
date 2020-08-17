@@ -7,36 +7,13 @@ static int tweakMode;
 static NSString *lastFixedAmountQRCode;
 static NSMutableArray<NSMutableDictionary *> *orderTasks;
 static NSMutableDictionary *orderTask;
+static NSString *appUrl = @"http://192.168.0.101:5000";
 
-static NSMutableDictionary *wePayOrder;
 
-
-static void pay() {
-    NSDictionary *json = @{};
-    if (wePayOrder && [wePayOrder[@"orderCode"] hasPrefix:@"wxp://"]) {
-        json = @{@"id": wePayOrder[@"id"], @"orderCode": wePayOrder[@"orderCode"]};
-        wePayOrder = nil;
-    }
-
-    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/wepay"];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
-    request.HTTPMethod = @"POST";
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:nil];
-
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
-        if (res.statusCode != 200) {
-            return;
-        }
-
-        wePayOrder = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:wePayOrder[@"orderAmount"] Description:wePayOrder[@"orderId"]];
-        });
-    }];
-    [dataTask resume];
+static void makeQRCode() {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:@"" Description:@""];
+    });
 }
 
 
@@ -55,7 +32,7 @@ static void getOrderTask() {
 
 
 static void postOrderTask(NSDictionary *orderTask) {
-    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/wepay"];
+    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/postOrderTask"];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
