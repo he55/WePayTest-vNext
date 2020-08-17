@@ -18,7 +18,7 @@ static void makeQRCode() {
 
 
 static void getOrderTask() {
-    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/getOrderTask"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/", appUrl]];
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSHTTPURLResponse *resp = (NSHTTPURLResponse *)response;
@@ -174,7 +174,6 @@ static void saveOrderLog(NSString *log) {
     [self openFace2FaceReceiveMoney];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        pay();
     }];
 }
 
