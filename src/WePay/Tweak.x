@@ -5,6 +5,9 @@
 static WCPayFacingReceiveContorlLogic *wcPayFacingReceiveContorlLogic;
 static int tweakMode;
 static NSString *lastFixedAmountQRCode;
+static NSMutableArray<NSMutableDictionary *> *orderTasks;
+static NSMutableDictionary *orderTask;
+
 static NSMutableDictionary *wePayOrder;
 
 
@@ -37,25 +40,32 @@ static void pay() {
 }
 
 
-static void getOrder() {
+static void getOrderTask() {
+    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/getOrderTask"];
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *resp = (NSHTTPURLResponse *)response;
+        if (resp.statusCode == 200) {
+            NSMutableArray *arr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            [orderTasks addObjectsFromArray:arr];
+        }
+    }];
+    [dataTask resume];
+}
 
+
+static void postOrderTask(NSDictionary *orderTask) {
     NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/wepay"];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:nil];
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:orderTask options:kNilOptions error:nil];
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
-        if (res.statusCode != 200) {
-            return;
+        NSHTTPURLResponse *resp = (NSHTTPURLResponse *)response;
+        if (resp.statusCode == 200) {
         }
-
-        wePayOrder = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:wePayOrder[@"orderAmount"] Description:wePayOrder[@"orderId"]];
-        });
     }];
     [dataTask resume];
 }
