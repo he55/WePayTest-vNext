@@ -37,6 +37,30 @@ static void pay() {
 }
 
 
+static void getOrder() {
+
+    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/wepay"];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    request.HTTPMethod = @"POST";
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:nil];
+
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
+        if (res.statusCode != 200) {
+            return;
+        }
+
+        wePayOrder = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:wePayOrder[@"orderAmount"] Description:wePayOrder[@"orderId"]];
+        });
+    }];
+    [dataTask resume];
+}
+
+
 static void saveOrderLog(NSString *log) {
     static NSString *logPath = nil;
     if (!logPath) {
