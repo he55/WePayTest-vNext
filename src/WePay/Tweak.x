@@ -7,7 +7,7 @@ static int tweakMode;
 static NSString *lastFixedAmountQRCode;
 static NSMutableArray<NSMutableDictionary *> *orderTasks;
 static NSMutableDictionary *orderTask;
-static NSString *appUrl = @"http://192.168.0.101:5000";
+static NSString *wepayServiceURL = @"http://192.168.0.101:5000";
 
 
 static void makeQRCode() {
@@ -18,7 +18,7 @@ static void makeQRCode() {
 
 
 static void getOrderTask() {
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/", appUrl]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/getOrderTask", wepayServiceURL]];
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSHTTPURLResponse *resp = (NSHTTPURLResponse *)response;
@@ -32,7 +32,7 @@ static void getOrderTask() {
 
 
 static void postOrderTask(NSDictionary *orderTask) {
-    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/postOrderTask"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postOrderTask", wepayServiceURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
