@@ -78,12 +78,12 @@ static void saveOrderLog(NSString *log) {
     if ([self onError:arg2] || [lastFixedAmountQRCode isEqualToString:arg1.m_nsFixedAmountQRCode]) {
         return;
     }
+
     lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
 
     if (tweakMode == 0) {
-        wePayOrder[@"orderCode"] = lastFixedAmountQRCode;
-        saveOrderLog([wePayOrder description]);
-
+        orderTask[@"orderCode"] = lastFixedAmountQRCode;
+        saveOrderLog([orderTask description]);
         [self stopLoading];
     } else if (tweakMode == 1) {
         tweakMode = 0;
@@ -112,29 +112,6 @@ static void saveOrderLog(NSString *log) {
 
 - (void)onSessionTotalUnreadCountChange:(unsigned int)arg1 {
     %orig;
-    return;
-
-
-    NSDictionary *json = @{};
-    if (wePayOrder && [wePayOrder[@"orderCode"] hasPrefix:@"wxp://"]) {
-        json = @{@"id": wePayOrder[@"id"], @"orderCode": wePayOrder[@"orderCode"]};
-        wePayOrder = nil;
-    }
-
-    NSURL *url = [NSURL URLWithString:@"http://192.168.0.101:5000/wepay"];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
-    request.HTTPMethod = @"POST";
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:json options:kNilOptions error:nil];
-
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
-        if (res.statusCode != 200) {
-            return;
-        }
-    }];
-    [dataTask resume];
 }
 
 %end
