@@ -5,8 +5,8 @@
 static WCPayFacingReceiveContorlLogic *wcPayFacingReceiveContorlLogic;
 static int tweakMode;
 static NSString *lastFixedAmountQRCode;
-static NSMutableArray<NSMutableDictionary *> *orderTasks;
-static NSMutableDictionary *orderTask;
+static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
+static NSMutableDictionary *s_orderTask;
 static NSString *wepayServiceURL = @"http://192.168.0.101:5000";
 
 
@@ -21,10 +21,9 @@ static void getOrderTask() {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/getOrderTask", wepayServiceURL]];
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *resp = (NSHTTPURLResponse *)response;
-        if (resp.statusCode == 200) {
+        if (((NSHTTPURLResponse *)response).statusCode == 200) {
             NSMutableArray *arr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            [orderTasks addObjectsFromArray:arr];
+            [s_orderTasks addObjectsFromArray:arr];
         }
     }];
     [dataTask resume];
@@ -40,8 +39,7 @@ static void postOrderTask(NSDictionary *orderTask) {
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *resp = (NSHTTPURLResponse *)response;
-        if (resp.statusCode == 200) {
+        if (((NSHTTPURLResponse *)response).statusCode == 200) {
         }
     }];
     [dataTask resume];
@@ -82,8 +80,8 @@ static void saveOrderLog(NSString *log) {
     lastFixedAmountQRCode = arg1.m_nsFixedAmountQRCode;
 
     if (tweakMode == 0) {
-        orderTask[@"orderCode"] = lastFixedAmountQRCode;
-        saveOrderLog([orderTask description]);
+        s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
+        saveOrderLog([s_orderTask description]);
         [self stopLoading];
     } else if (tweakMode == 1) {
         tweakMode = 0;
