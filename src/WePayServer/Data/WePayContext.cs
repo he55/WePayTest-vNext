@@ -33,17 +33,17 @@ namespace WePayServer.Data
         {
             foreach (var entityEntry in ChangeTracker.Entries())
             {
-                if (entityEntry.Entity is ModelBase e)
+                if (entityEntry.Entity is ModelBase model)
                 {
                     if (entityEntry.State == EntityState.Added)
                     {
                         long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                        e.CreateTime = timestamp;
-                        e.UpdateTime = timestamp;
+                        model.CreateTime = timestamp;
+                        model.UpdateTime = timestamp;
                     }
                     else if (entityEntry.State == EntityState.Modified)
                     {
-                        e.UpdateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        model.UpdateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     }
                 }
             }
