@@ -106,9 +106,9 @@ static void saveOrderLog(NSString *log) {
 %end
 
 
-%hook MainFrameLogicController
+%hook CMessageMgr
 
-- (void)onSessionTotalUnreadCountChange:(unsigned int)arg1 {
+- (void)onNewSyncAddMessage:(id)arg1 {
     %orig;
 }
 
