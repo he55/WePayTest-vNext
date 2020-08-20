@@ -7,10 +7,10 @@ static int tweakMode;
 static NSString *lastFixedAmountQRCode;
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableDictionary *s_orderTask;
-static NSString *wepayServiceURL = @"http://192.168.0.101:5000";
+static NSString * const WePayServiceURL = @"http://192.168.0.101:5000";
 
 
-static void makeQRCode() {
+static void makeQRCode(NSDictionary *orderTask) {
     dispatch_async(dispatch_get_main_queue(), ^{
         [wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:@"" Description:@""];
     });
@@ -18,7 +18,7 @@ static void makeQRCode() {
 
 
 static void getOrderTask() {
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/getOrderTask", wepayServiceURL]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/getOrderTask", WePayServiceURL]];
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
@@ -31,7 +31,7 @@ static void getOrderTask() {
 
 
 static void postOrderTask(NSDictionary *orderTask) {
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postOrderTask", wepayServiceURL]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postOrderTask", WePayServiceURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
