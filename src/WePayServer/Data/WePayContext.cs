@@ -18,32 +18,32 @@ namespace WePayServer.Data
         /// <inheritdoc />
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            SetModelBaseTime();
+            SetModelBaseValue();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         /// <inheritdoc />
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            SetModelBaseTime();
+            SetModelBaseValue();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
-        private void SetModelBaseTime()
+        private void SetModelBaseValue()
         {
             foreach (var entityEntry in ChangeTracker.Entries())
             {
                 if (entityEntry.Entity is ModelBase model)
                 {
+                    long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     if (entityEntry.State == EntityState.Added)
                     {
-                        long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                         model.CreateTime = timestamp;
                         model.UpdateTime = timestamp;
                     }
                     else if (entityEntry.State == EntityState.Modified)
                     {
-                        model.UpdateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        model.UpdateTime = timestamp;
                     }
                 }
             }
