@@ -40,7 +40,8 @@ namespace WePayServer.Controllers
             public string OrderCode { get; set; } = "";
         }
 
-        [HttpPost("/getOrderTask")]
+
+        [HttpGet("/getOrderTask")]
         public ActionResult<List<WePayOrder>> GetOrderTask()
         {
             List<WePayOrder> wePayOrders = WePayOrders.Where(x => !x.IsSend)
@@ -50,6 +51,7 @@ namespace WePayServer.Controllers
             wePayOrders.ForEach(x => x.IsSend = true);
             return wePayOrders;
         }
+
 
         [HttpPost("/postOrderTask")]
         public ResultModel PostOrderTask(OrderCodeDto orderCodeDto)
