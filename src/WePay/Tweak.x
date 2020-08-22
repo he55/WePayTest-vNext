@@ -13,7 +13,7 @@ static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
 
 
 static void makeQRCode() {
-    if (s_isMakeQRCodeFlag || !s_orderTask.count) {
+    if (s_isMakeQRCodeFlag || !s_orderTasks.count) {
         return;
     }
 
