@@ -9,7 +9,7 @@ static BOOL s_isMakeQRCodeFlag;
 
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableDictionary *s_orderTask;
-static NSString * const WePayServiceURL = @"http://192.168.0.101:5000";
+static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
 
 
 static void makeQRCode() {
