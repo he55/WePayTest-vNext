@@ -5,7 +5,7 @@
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
 static NSString *s_lastFixedAmountQRCode;
-static BOOL s_flag;
+static BOOL s_isMakeQRCodeFlag;
 
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableDictionary *s_orderTask;
@@ -13,17 +13,17 @@ static NSString * const WePayServiceURL = @"http://192.168.0.101:5000";
 
 
 static void makeQRCode() {
-    if (s_flag) {
+    if (s_isMakeQRCodeFlag) {
         return;
     }
-    s_flag = YES;
+    s_isMakeQRCodeFlag = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
         while (s_orderTasks.count) {
             s_orderTask = s_orderTasks[0];
             [s_orderTasks removeObject:s_orderTask];
             [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:s_orderTask[@"orderAmount"] Description:s_orderTask[@"orderId"]];
         }
-        s_flag = NO;
+        s_isMakeQRCodeFlag = NO;
     });
 }
 
@@ -35,6 +35,7 @@ static void getOrderTask() {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
             NSMutableArray *arr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             [s_orderTasks addObjectsFromArray:arr];
+            makeQRCode();
         }
     }];
     [dataTask resume];
