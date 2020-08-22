@@ -25,7 +25,6 @@ namespace WePayServer.Pages.Order
             }
 
             WePayOrder = await _context.WePayOrders.FirstOrDefaultAsync(m => m.Id == id);
-
             if (WePayOrder == null)
             {
                 return NotFound();

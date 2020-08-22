@@ -15,7 +15,6 @@ namespace WePayServer.Pages.Order
             _context = context;
         }
 
-        [BindProperty]
         public WePayOrder WePayOrder { get; set; } = null!;
 
         public async Task<IActionResult> OnGetAsync(long? id)
@@ -26,7 +25,6 @@ namespace WePayServer.Pages.Order
             }
 
             WePayOrder = await _context.WePayOrders.FirstOrDefaultAsync(m => m.Id == id);
-
             if (WePayOrder == null)
             {
                 return NotFound();
@@ -41,11 +39,10 @@ namespace WePayServer.Pages.Order
                 return NotFound();
             }
 
-            WePayOrder = await _context.WePayOrders.FindAsync(id);
-
-            if (WePayOrder != null)
+            WePayOrder wePayOrder = await _context.WePayOrders.FindAsync(id);
+            if (wePayOrder != null)
             {
-                WePayOrder.IsDeleted = true;
+                wePayOrder.IsDeleted = true;
                 await _context.SaveChangesAsync();
             }
             return RedirectToPage("./Index");
