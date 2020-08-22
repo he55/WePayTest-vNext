@@ -13,6 +13,8 @@ static NSString * const WePayServiceURL = @"http://192.168.0.101:5000";
 
 static void makeQRCode(NSDictionary *orderTask) {
     dispatch_async(dispatch_get_main_queue(), ^{
+        s_orderTask = s_orderTasks[0];
+        [s_orderTasks removeObject:s_orderTask];
         [s_wcPayFacingReceiveContorlLogic WCPayFacingReceiveFixedAmountViewControllerNext:orderTask[@"orderAmount"] Description:orderTask[@"orderId"]];
     });
 }
