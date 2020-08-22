@@ -183,6 +183,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 %new
 - (void)handleOpenFace2FaceReceiveMoney {
     [self openFace2FaceReceiveMoney];
+    s_orderTasks = [NSMutableArray array];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
         getOrderTask();
