@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -76,5 +77,7 @@ namespace WePayServer.Data
         public string OrderCode { get; set; } = "";
         public string OrderMessage { get; set; } = "";
         public bool IsPay { get; set; }
+        [NotMapped]
+        public bool IsSend { get; set; }
     }
 }

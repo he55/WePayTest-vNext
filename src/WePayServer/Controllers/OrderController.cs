@@ -40,25 +40,28 @@ namespace WePayServer.Controllers
             public string OrderCode { get; set; } = "";
         }
 
-        [HttpPost("/wepay")]
-        public ActionResult<WePayOrder> WePay(OrderCodeDto orderCodeDto)
+        [HttpPost("/getOrderTask")]
+        public ActionResult<List<WePayOrder>> GetOrderTask()
         {
-            if (orderCodeDto.Id != 0)
-            {
-                WePayOrder wePayOrder = WePayOrders.Where(x => x.Id == orderCodeDto.Id).FirstOrDefault();
-                if (wePayOrder != null)
-                {
-                    wePayOrder.OrderCode = orderCodeDto.OrderCode;
-                    WePayOrders.Remove(wePayOrder);
-                }
-            }
+            List<WePayOrder> wePayOrders = WePayOrders.Where(x => !x.IsSend)
+                .OrderBy(x => x.Id)
+                .ToList();
 
-            WePayOrder order = WePayOrders.Where(x => string.IsNullOrEmpty(x.OrderCode)).FirstOrDefault();
-            if (order != null)
+            wePayOrders.ForEach(x => x.IsSend = true);
+            return wePayOrders;
+        }
+
+        [HttpPost("/postOrderTask")]
+        public ResultModel PostOrderTask(OrderCodeDto orderCodeDto)
+        {
+            WePayOrder wePayOrder = WePayOrders.Where(x => x.Id == orderCodeDto.Id)
+                .FirstOrDefault();
+            if (wePayOrder != null)
             {
-                return order;
+                wePayOrder.OrderCode = orderCodeDto.OrderCode;
+                WePayOrders.Remove(wePayOrder);
             }
-            return NoContent();
+            return this.ResultSuccess(null);
         }
 
         [HttpPost("/postorder")]
