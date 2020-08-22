@@ -18,7 +18,7 @@ namespace WePayServer.Pages.Order
         [BindProperty]
         public WePayOrder WePayOrder { get; set; } = null!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(long? id)
         {
             if (id == null)
             {
@@ -34,7 +34,7 @@ namespace WePayServer.Pages.Order
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(long? id)
         {
             if (id == null)
             {
@@ -45,11 +45,9 @@ namespace WePayServer.Pages.Order
 
             if (WePayOrder != null)
             {
-                // _context.WePayOrders.Remove(WePayOrder);
                 WePayOrder.IsDeleted = true;
                 await _context.SaveChangesAsync();
             }
-
             return RedirectToPage("./Index");
         }
     }
