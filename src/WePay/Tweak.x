@@ -46,7 +46,7 @@ static void postOrderTask(NSDictionary *orderTask) {
 }
 
 
-static void saveOrderLog(NSString *log) {
+static void saveOrderTaskLog(NSDictionary *orderTask) {
     static NSString *logPath = nil;
     if (!logPath) {
         NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
@@ -56,7 +56,7 @@ static void saveOrderLog(NSString *log) {
     NSOutputStream *outputStream = [[NSOutputStream alloc] initToFileAtPath:logPath append:YES];
     [outputStream open];
 
-    NSData *data = [[NSString stringWithFormat:@"%@\n\n", log] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *data = [[NSString stringWithFormat:@"%@\n\n", orderTask] dataUsingEncoding:NSUTF8StringEncoding];
     [outputStream write:data.bytes maxLength:data.length];
     [outputStream close];
 }
@@ -81,16 +81,15 @@ static void saveOrderLog(NSString *log) {
 
     if (tweakMode == 0) {
         s_orderTask[@"orderCode"] = lastFixedAmountQRCode;
-        saveOrderLog([s_orderTask description]);
+        saveOrderTaskLog(s_orderTask);
+        postOrderTask(s_orderTask);
         [self stopLoading];
     } else if (tweakMode == 1) {
         tweakMode = 0;
-
         WCPayControlData *m_data = [self valueForKey:@"m_data"];
         m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
         m_data.fixed_qrcode_level = arg1.qrcode_level;
         m_data.m_enWCPayFacingReceiveMoneyScene = 2;
-
         [self stopLoading];
 
         id viewController = [[%c(CAppViewControllerManager) getAppViewControllerManager] getTopViewController];
@@ -106,6 +105,7 @@ static void saveOrderLog(NSString *log) {
 %end
 
 
+// 接收消息
 %hook CMessageMgr
 
 - (void)onNewSyncAddMessage:(id)arg1 {
@@ -172,6 +172,7 @@ static void saveOrderLog(NSString *log) {
     [self openFace2FaceReceiveMoney];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
+        getOrderTask();
     }];
 }
 
