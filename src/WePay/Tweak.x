@@ -13,9 +13,10 @@ static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
 
 
 static void makeQRCode() {
-    if (s_isMakeQRCodeFlag) {
+    if (s_isMakeQRCodeFlag || !s_orderTask.count) {
         return;
     }
+
     s_isMakeQRCodeFlag = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
         while (s_orderTasks.count) {
@@ -102,8 +103,8 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
         m_data.m_nsFixedAmountReceiveMoneyQRCode = arg1.m_nsFixedAmountQRCode;
         m_data.fixed_qrcode_level = arg1.qrcode_level;
         m_data.m_enWCPayFacingReceiveMoneyScene = 2;
-        [self stopLoading];
 
+        [self stopLoading];
         id viewController = [[%c(CAppViewControllerManager) getAppViewControllerManager] getTopViewController];
         if ([viewController isKindOfClass:%c(WCPayFacingReceiveQRCodeViewController)]) {
             [(WCPayFacingReceiveQRCodeViewController *)viewController refreshViewWithData:m_data];
