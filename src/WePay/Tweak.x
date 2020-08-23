@@ -79,7 +79,13 @@ static void postMessage(NSDictionary *message) {
 
 static void sendMessage() {
     static NSInteger timestamp = 0;
-    NSDictionary *dict = [HWZWeChatMessage messageWithTimestamp:timestamp];
+    while (1) {
+        NSDictionary *message = [HWZWeChatMessage messageWithTimestamp:timestamp];
+        if (!message) {
+            break;
+        }
+        postMessage(message);
+    }
 }
 
 
