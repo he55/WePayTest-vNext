@@ -40,41 +40,13 @@
 }
 
 
-+ (NSDictionary<NSString *, id> *)messageWithTimestamp:(NSInteger)timestamp {
-    FMDatabase *db = [FMDatabase databaseWithPath:HWZDbPath];
-    if (![db open]) {
-        return nil;
-    }
-
-    static NSString * sql = @"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime LIMIT 1";
-    FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:sql, HWZTableName], @(timestamp)];
-    if (!resultSet) {
-        return nil;
-    }
-
-    if (![resultSet next]) {
-        return nil;
-    }
-
-    NSDictionary *message = @{
-        @"createTime": @([resultSet intForColumnIndex:0]),
-        @"messageId": [resultSet stringForColumnIndex:1],
-        @"message": [resultSet stringForColumnIndex:2]
-    };
-
-    [db close];
-
-    return message;
-}
-
-
 + (NSArray<NSDictionary<NSString *, id> *> *)messagesWithTimestamp:(NSInteger)timestamp {
     FMDatabase *db = [FMDatabase databaseWithPath:HWZDbPath];
     if (![db open]) {
         return nil;
     }
 
-    static NSString * sql = @"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime";
+    static NSString * sql = @"SELECT CreateTime, MesSvrID, Message FROM %@ WHERE Des = 1 AND Type = 49 AND CreateTime > ? AND Message LIKE '%%<![CDATA[we/_%%' ESCAPE '/' ORDER BY CreateTime LIMIT 5";
     FMResultSet *resultSet = [db executeQuery:[NSString stringWithFormat:sql, HWZTableName], @(timestamp)];
     if (!resultSet) {
         return nil;

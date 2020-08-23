@@ -2,6 +2,7 @@
 #import "CAppViewControllerManager.h"
 #import "WCUIAlertView.h"
 #import "HWZSettings.h"
+#import "HWZWeChatMessage.h"
 
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
@@ -60,12 +61,12 @@ static void postOrderTask(NSDictionary *orderTask) {
 }
 
 
-static void postMessage(NSDictionary *message) {
+static void postMessage(NSArray *messages) {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postMessage", WePayServiceURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:message options:kNilOptions error:nil];
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:messages options:kNilOptions error:nil];
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
@@ -73,6 +74,15 @@ static void postMessage(NSDictionary *message) {
         }
     }];
     [dataTask resume];
+}
+
+
+static void sendMessage() {
+    static NSInteger timestamp = 0;
+    NSArray *arr = [HWZWeChatMessage messagesWithTimestamp:timestamp];
+    if (arr.count) {
+
+    }
 }
 
 

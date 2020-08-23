@@ -10,13 +10,11 @@
 
 NSString * HWZDbPath;
 NSString * HWZTableName;
-NSInteger HWZTimestamp;
 
 @implementation HWZSettings
 
 + (BOOL)loadSettings {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    HWZTimestamp = [userDefaults integerForKey:@"HWZTimestamp"];
 
 
 

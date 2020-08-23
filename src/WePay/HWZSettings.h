@@ -10,7 +10,6 @@
 
 extern NSString * _Nullable HWZDbPath;
 extern NSString * _Nullable HWZTableName;
-extern NSInteger HWZTimestamp;
 
 NS_ASSUME_NONNULL_BEGIN
 
