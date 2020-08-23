@@ -61,12 +61,12 @@ static void postOrderTask(NSDictionary *orderTask) {
 }
 
 
-static void postMessage(NSArray *messages) {
+static void postMessage(NSDictionary *message) {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/postMessage", WePayServiceURL]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     request.HTTPMethod = @"POST";
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:messages options:kNilOptions error:nil];
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:message options:kNilOptions error:nil];
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
