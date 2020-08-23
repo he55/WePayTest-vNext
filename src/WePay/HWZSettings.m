@@ -10,7 +10,6 @@
 
 NSString * HWZDbPath;
 NSString * HWZTableName;
-NSString * HWZOrderServiceCallbackURL;
 
 @implementation HWZSettings
 
@@ -23,7 +22,6 @@ NSString * HWZOrderServiceCallbackURL;
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
     HWZDbPath = dict[@"dbPath"];
     HWZTableName = dict[@"tableName"];
-    HWZOrderServiceCallbackURL = dict[@"orderServiceCallbackURL"];
 
     if (!HWZDbPath || !HWZTableName) {
         return NO;

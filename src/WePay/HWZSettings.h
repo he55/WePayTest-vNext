@@ -10,7 +10,6 @@
 
 extern NSString * _Nullable HWZDbPath;
 extern NSString * _Nullable HWZTableName;
-extern NSString * _Nullable HWZOrderServiceCallbackURL;
 
 NS_ASSUME_NONNULL_BEGIN
 
