@@ -1,6 +1,7 @@
 #import "header.h"
 #import "CAppViewControllerManager.h"
 #import "WCUIAlertView.h"
+#import "HWZSettings.h"
 
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
@@ -200,6 +201,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 - (void)handleOpenFace2FaceReceiveMoney {
     [self openFace2FaceReceiveMoney];
     s_orderTasks = [NSMutableArray array];
+    [HWZSettings loadSettings];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
         getOrderTask();
