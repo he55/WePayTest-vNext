@@ -15,19 +15,6 @@ NSString * HWZOrderServiceCallbackURL;
 @implementation HWZSettings
 
 + (BOOL)loadSettings {
-    NSString *path = @"/var/mobile/WePaySettings.plist";
-    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        return NO;
-    }
-
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    HWZDbPath = dict[@"dbPath"];
-    HWZTableName = dict[@"tableName"];
-    HWZOrderServiceCallbackURL = dict[@"orderServiceCallbackURL"];
-
-    if (!HWZDbPath || !HWZTableName) {
-        return NO;
-    }
     return YES;
 }
 
