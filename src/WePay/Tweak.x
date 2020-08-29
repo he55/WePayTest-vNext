@@ -3,6 +3,8 @@
 #import "WCUIAlertView.h"
 #import "HWZWeChatMessage.h"
 
+static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
+
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
 static NSString *s_lastFixedAmountQRCode;
@@ -10,7 +12,7 @@ static BOOL s_isMakeQRCodeFlag;
 
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableDictionary *s_orderTask;
-static NSString * const WePayServiceURL = @"http://192.168.0.103:5000";
+static NSInteger s_timestamp = NSIntegerMax;
 
 
 static void makeQRCode() {
@@ -77,8 +79,7 @@ static void postMessage(NSArray *messages) {
 
 
 static void sendMessage() {
-    static NSInteger timestamp = NSIntegerMax;
-    NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:timestamp];
+    NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:s_timestamp];
     postMessage(messages);
 }
 
@@ -147,6 +148,7 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 
 - (void)onNewSyncAddMessage:(id)arg1 {
     %orig;
+    sendMessage();
 }
 
 %end
