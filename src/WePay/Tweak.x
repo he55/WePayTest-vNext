@@ -12,7 +12,7 @@ static BOOL s_isMakeQRCodeFlag;
 
 static NSMutableArray<NSMutableDictionary *> *s_orderTasks;
 static NSMutableDictionary *s_orderTask;
-static NSInteger s_timestamp = NSIntegerMax;
+static NSInteger s_lastTimestamp = NSIntegerMax;
 
 
 static void makeQRCode() {
@@ -72,6 +72,11 @@ static void postMessage(NSArray *messages) {
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
+            NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSInteger lastTimestamp = [content integerValue];
+            if (lastTimestamp) {
+                s_lastTimestamp = lastTimestamp;
+            }
         }
     }];
     [dataTask resume];
@@ -79,7 +84,7 @@ static void postMessage(NSArray *messages) {
 
 
 static void sendMessage() {
-    NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:s_timestamp];
+    NSArray *messages = [HWZWeChatMessage messagesWithTimestamp:s_lastTimestamp];
     postMessage(messages);
 }
 
