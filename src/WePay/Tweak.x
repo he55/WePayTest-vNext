@@ -1,8 +1,6 @@
 #import "header.h"
 #import "CAppViewControllerManager.h"
 #import "WCUIAlertView.h"
-#import "HWZSettings.h"
-#import "HWZWeChatMessage.h"
 
 static WCPayFacingReceiveContorlLogic *s_wcPayFacingReceiveContorlLogic;
 static int s_tweakMode;
@@ -79,13 +77,6 @@ static void postMessage(NSDictionary *message) {
 
 static void sendMessage() {
     static NSInteger timestamp = 0;
-    while (1) {
-        NSDictionary *message = [HWZWeChatMessage messageWithTimestamp:timestamp];
-        if (!message) {
-            break;
-        }
-        postMessage(message);
-    }
 }
 
 
@@ -214,7 +205,6 @@ static void saveOrderTaskLog(NSDictionary *orderTask) {
 - (void)handleOpenFace2FaceReceiveMoney {
     [self openFace2FaceReceiveMoney];
     s_orderTasks = [NSMutableArray array];
-    [HWZSettings loadSettings];
 
     [NSTimer scheduledTimerWithTimeInterval:2.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
         getOrderTask();
