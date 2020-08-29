@@ -1,6 +1,6 @@
 //
 //  HWZSettings.h
-//  WePay
+//  WePayManager
 //
 //  Created by 何伟忠 on 6/14/20.
 //  Copyright © 2020 何伟忠. All rights reserved.
@@ -10,12 +10,15 @@
 
 extern NSString * _Nullable HWZDbPath;
 extern NSString * _Nullable HWZTableName;
+extern NSString * _Nullable HWZOrderServiceURL;
+extern NSString * _Nullable HWZOrderServiceCallbackURL;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface HWZSettings : NSObject
 
-+ (BOOL)loadSettings;
++ (void)loadSettings;
++ (BOOL)saveSettings;
 
 @end
 
