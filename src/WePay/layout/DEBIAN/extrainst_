@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [[ $1 == upgrade ]]; then
+  launchctl unload /Library/LaunchDaemons/com.hwz.wepayd.plist
+fi
+
+if [[ $1 == install || $1 == upgrade ]]; then
+  launchctl load /Library/LaunchDaemons/com.hwz.wepayd.plist
+fi
+
+exit 0

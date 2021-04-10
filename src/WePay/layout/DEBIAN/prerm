@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [[ $1 == remove || $1 == purge ]]; then
+  launchctl unload /Library/LaunchDaemons/com.hwz.wepayd.plist
+fi
+
+exit 0
