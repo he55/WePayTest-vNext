@@ -79,9 +79,9 @@ namespace WePayServer.Controllers
                 return this.ResultFail("参数错误，金额不能小于 0.01 元");
             }
 
-            if (order.OrderId.Length == 0)
+            if (string.IsNullOrWhiteSpace(order.OrderId))
             {
-                return this.ResultFail("参数错误，订单号长度不能为 0");
+                return this.ResultFail("参数错误，订单号不能为空");
             }
 
             if (await _context.WePayOrders.AnyAsync(x => x.OrderId == order.OrderId))
