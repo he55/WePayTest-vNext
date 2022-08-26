@@ -11,9 +11,9 @@ namespace WePayServer.Controllers
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
-        private readonly WePayContext _context;
-
         private static readonly List<WePayOrder> WePayOrders = new List<WePayOrder>();
+
+        private readonly WePayContext _context;
 
         public OrderController(WePayContext context)
         {
@@ -31,12 +31,10 @@ namespace WePayServer.Controllers
             return wePayOrders;
         }
 
-
         [HttpPost("/postOrderTask")]
         public ResultModel PostOrderTask(OrderCodeDto orderCodeDto)
         {
-            WePayOrder wePayOrder = WePayOrders.Where(x => x.Id == orderCodeDto.Id)
-                .FirstOrDefault();
+            WePayOrder wePayOrder = WePayOrders.FirstOrDefault(x => x.Id == orderCodeDto.Id);
             if (wePayOrder != null)
             {
                 wePayOrder.OrderCode = orderCodeDto.OrderCode;
@@ -51,9 +49,7 @@ namespace WePayServer.Controllers
             Dictionary<string, string> messageInfo = WeChatService.GetMessageInfo(messageDto.Message);
             string orderId = messageInfo["detail_content_value_1"];
 
-            WePayOrder order = await _context.WePayOrders
-                .Where(x => x.OrderId == orderId)
-                .FirstOrDefaultAsync();
+            WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.OrderId == orderId);
             if (order != null)
             {
                 order.IsPay = true;
@@ -67,9 +63,7 @@ namespace WePayServer.Controllers
         [HttpGet("{id:long}")]
         public async Task<ResultModel> GetOrderAsync(long id)
         {
-            WePayOrder order = await _context.WePayOrders
-                .Where(x => x.Id == id)
-                .FirstOrDefaultAsync();
+            WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.Id == id);
             if (order == null)
             {
                 return this.ResultFail("没有找到指定订单");
@@ -95,12 +89,12 @@ namespace WePayServer.Controllers
                 return this.ResultFail("订单号已经存在");
             }
 
-
             WePayOrder wePayOrder = new WePayOrder
             {
                 OrderId = order.OrderId,
                 OrderAmount = order.OrderAmount
             };
+
             _context.WePayOrders.Add(wePayOrder);
             await _context.SaveChangesAsync();
 

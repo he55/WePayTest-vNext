@@ -14,15 +14,10 @@ namespace WePayServer.Pages.Order
             _context = context;
         }
 
-        public WePayOrder WePayOrder { get; set; } = null!;
+        public WePayOrder WePayOrder { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(long? id)
+        public async Task<IActionResult> OnGetAsync(long id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             WePayOrder = await _context.WePayOrders.FirstOrDefaultAsync(m => m.Id == id);
             if (WePayOrder == null)
             {

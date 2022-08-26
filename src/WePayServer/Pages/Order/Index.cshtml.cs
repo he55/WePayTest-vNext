@@ -14,7 +14,7 @@ namespace WePayServer.Pages.Order
             _context = context;
         }
 
-        public IList<WePayOrder> WePayOrder { get; set; } = null!;
+        public IList<WePayOrder> WePayOrder { get; set; }
 
         public async Task OnGetAsync()
         {
