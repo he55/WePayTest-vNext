@@ -1,5 +1,4 @@
-﻿using WePayServer.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WePayServer.Pages.Order

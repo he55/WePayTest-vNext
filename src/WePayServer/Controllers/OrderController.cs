@@ -1,25 +1,21 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using WePayServer.Data;
-using WePayServer.Models;
-using WePayServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
+using WePayServer.Models;
 
 namespace WePayServer.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public partial class OrderController : ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly WePayContext _context;
 
         private static readonly List<WePayOrder> WePayOrders = new List<WePayOrder>();
 
-        public OrderController( WePayContext context)
+        public OrderController(WePayContext context)
         {
             _context = context;
         }

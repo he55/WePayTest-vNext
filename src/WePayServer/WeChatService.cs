@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
 
-namespace WePayServer.Services
+namespace WePayServer
 {
     public class WeChatService
     {

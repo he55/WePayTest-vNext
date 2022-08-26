@@ -1,5 +1,3 @@
-using WePayServer.Data;
-using WePayServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
