@@ -102,8 +102,9 @@ namespace WePayServer.Controllers
 
             for (int i = 0; i < 20; i++)
             {
-                await Task.Delay(300);
-                if (!string.IsNullOrEmpty(wePayOrder.OrderCode))
+                //await Task.Delay(300);
+                wePayOrder.OrderCode = "123456";
+                if (!string.IsNullOrWhiteSpace(wePayOrder.OrderCode))
                 {
                     await _context.SaveChangesAsync();
                     return this.ResultSuccess(wePayOrder);
