@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WePayServer", "WePayServer\WePayServer.csproj", "{405D0D74-6969-4FF0-8245-8A4377022886}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WePayServer", "WePayServer\WePayServer.csproj", "{BB6885FB-C77A-42F8-830D-C85FD871D068}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{405D0D74-6969-4FF0-8245-8A4377022886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{405D0D74-6969-4FF0-8245-8A4377022886}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{405D0D74-6969-4FF0-8245-8A4377022886}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{405D0D74-6969-4FF0-8245-8A4377022886}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB6885FB-C77A-42F8-830D-C85FD871D068}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB6885FB-C77A-42F8-830D-C85FD871D068}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB6885FB-C77A-42F8-830D-C85FD871D068}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB6885FB-C77A-42F8-830D-C85FD871D068}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {AFAFE2E3-9BDB-452F-B455-E8AB87FD011E}
+		SolutionGuid = {8CE93973-A280-4EEA-9D3B-5BF2C390D2C7}
 	EndGlobalSection
 EndGlobal
