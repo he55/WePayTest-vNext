@@ -13,33 +13,16 @@ namespace WePayServer.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrderController : ControllerBase
+    public partial class OrderController : ControllerBase
     {
-        private readonly ILogger<OrderController> _logger;
-        private readonly IConfiguration _configuration;
         private readonly WePayContext _context;
-        private readonly WeChatService _wechatService;
 
         private static readonly List<WePayOrder> WePayOrders = new List<WePayOrder>();
 
-        public OrderController(
-            ILogger<OrderController> logger,
-            IConfiguration configuration,
-            WePayContext context,
-            WeChatService wechatService)
+        public OrderController( WePayContext context)
         {
-            _logger = logger;
-            _configuration = configuration;
             _context = context;
-            _wechatService = wechatService;
         }
-
-        public class OrderCodeDto
-        {
-            public long Id { get; set; }
-            public string OrderCode { get; set; } = "";
-        }
-
 
         [HttpGet("/getOrderTask")]
         public ActionResult<List<WePayOrder>> GetOrderTask()
@@ -69,7 +52,7 @@ namespace WePayServer.Controllers
         [HttpPost("/postorder")]
         public async Task<ResultModel> PostOrder(WePayMessageDto messageDto)
         {
-            Dictionary<string, string> messageInfo = _wechatService.GetMessageInfo(messageDto.Message);
+            Dictionary<string, string> messageInfo = WeChatService.GetMessageInfo(messageDto.Message);
             string orderId = messageInfo["detail_content_value_1"];
 
             WePayOrder order = await _context.WePayOrders

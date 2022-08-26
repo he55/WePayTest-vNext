@@ -5,7 +5,7 @@ namespace WePayServer.Services
 {
     public class WeChatService
     {
-        public Dictionary<string, string> GetMessageInfo(string xmlMessage)
+        public static Dictionary<string, string> GetMessageInfo(string xmlMessage)
         {
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(xmlMessage);

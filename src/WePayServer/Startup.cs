@@ -26,8 +26,6 @@ namespace WePayServer
 
             services.AddDbContextPool<WePayContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("sqlite")));
-
-            services.AddSingleton<WeChatService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
