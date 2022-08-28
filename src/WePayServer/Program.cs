@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace WePayServer
 {
     public class Program
@@ -7,7 +9,12 @@ namespace WePayServer
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContextPool<WePayContext>(options =>
+                options.UseSqlite(builder.Configuration.GetConnectionString("sqlite")));
+
             builder.Services.AddAuthorization();
+            builder.Services.AddRazorPages();
+            builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -21,10 +28,22 @@ namespace WePayServer
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
 
             app.UseAuthorization();
+
+            app.MapRazorPages();
+            app.MapControllers();
 
             var summaries = new[]
             {
