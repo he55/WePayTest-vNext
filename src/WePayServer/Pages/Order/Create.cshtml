@@ -34,14 +34,12 @@
 
 
 <!-- qrcodeModal -->
-<div class="modal fade" id="qrcodeModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="qrcodeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" style="width:400px">
+<div class="modal fade" id="qrcodeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="qrcodeModalLabel">扫码支付</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div style="text-align:-webkit-center">
@@ -51,7 +49,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                 <button id="isPay" type="button" class="btn btn-primary">我已支付</button>
             </div>
         </div>
@@ -61,19 +59,17 @@
 
 <!-- tipModal -->
 <div class="modal fade" id="tipModal" tabindex="-1" role="dialog" aria-labelledby="tipModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="tipModalLabel">错误信息</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="error" style="color:red"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -85,9 +81,13 @@
 
     <script src="~/lib/qrcodejs/qrcode.min.js"></script>
     <script>
-        let error = document.getElementById('error')
-        let amount = document.getElementById("amount")
-        let qrcode = document.getElementById("qrcode")
+        const tipModal = new bootstrap.Modal('#tipModal')
+        const qrcodeModal = new bootstrap.Modal('#qrcodeModal')
+
+        function showTipModal(message) {
+            document.getElementById('error').innerHTML = message
+            tipModal.show()
+        }
 
         var orderId
 
@@ -109,13 +109,14 @@
                 return response.json()
             }).then(json => {
                 if (!json.success) {
-                    error.innerHTML = json.message
-                    $('#tipModal').modal()
+                    showTipModal(json.message)
                     return
                 }
 
                 orderId = json.result.id
 
+                let amount = document.getElementById("amount")
+                let qrcode = document.getElementById("qrcode")
                 qrcode.innerHTML = ''
                 amount.innerHTML = '￥ ' + json.result.orderAmount.toFixed(2)
 
@@ -128,10 +129,9 @@
                     correctLevel: QRCode.CorrectLevel.H
                 });
 
-                $('#qrcodeModal').modal()
+                qrcodeModal.show()
             }).catch(ex => {
-                error.innerHTML = '请求失败'
-                $('#tipModal').modal()
+                showTipModal('请求失败')
             })
         })
 
@@ -141,14 +141,12 @@
                     return response.json()
                 }).then(json => {
                     if (!json.success) {
-                        error.innerHTML = json.message
-                        $('#tipModal').modal()
+                        showTipModal(json.message)
                         return
                     }
                     console.log(json)
                 }).catch(ex => {
-                    error.innerHTML = '请求失败'
-                    $('#tipModal').modal()
+                    showTipModal('请求失败')
                 })
         })
     </script>
