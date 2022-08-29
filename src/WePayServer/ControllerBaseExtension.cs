@@ -2,7 +2,7 @@
 {
     public static class ControllerBaseExtension
     {
-        public static ResultModel ResultSuccess(this ControllerBase _, object? result, int code = 0, string message = "")
+        public static ResultModel ResultSuccess(this ControllerBase _, object? result = null, int code = 0, string message = "")
         {
             return new ResultModel
             {
@@ -13,7 +13,7 @@
             };
         }
 
-        public static ResultModel ResultFail(this ControllerBase _, string message, int code = 1, object? result = null)
+        public static ResultModel ResultFail(this ControllerBase _, string message = "", int code = 1, object? result = null)
         {
             return new ResultModel
             {

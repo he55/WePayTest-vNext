@@ -1,4 +1,11 @@
+using System;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace WePayServer
 {
@@ -16,11 +23,19 @@ namespace WePayServer
             builder.Services.AddRazorPages();
             builder.Services.AddControllers();
 
+            builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            using (IServiceScope serviceScope = app.Services.CreateScope())
+            {
+                WePayContext db = serviceScope.ServiceProvider.GetRequiredService<WePayContext>();
+                db.Database.EnsureCreated();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

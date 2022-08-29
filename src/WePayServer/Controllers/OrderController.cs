@@ -21,13 +21,14 @@ namespace WePayServer.Controllers
         }
 
         [HttpGet("/getOrderTask")]
-        public ActionResult<List<WePayOrder>> GetOrderTask()
+        public List<WePayOrder> GetOrderTask()
         {
             List<WePayOrder> wePayOrders = WePayOrders.Where(x => !x.IsSend)
                 .OrderBy(x => x.Id)
                 .ToList();
 
             wePayOrders.ForEach(x => x.IsSend = true);
+
             return wePayOrders;
         }
 
@@ -40,7 +41,8 @@ namespace WePayServer.Controllers
                 wePayOrder.OrderCode = orderCodeDto.OrderCode;
                 WePayOrders.Remove(wePayOrder);
             }
-            return this.ResultSuccess(null);
+
+            return this.ResultSuccess();
         }
 
         [HttpPost("/postorder")]
@@ -57,7 +59,7 @@ namespace WePayServer.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return this.ResultSuccess(null);
+            return this.ResultSuccess();
         }
 
         [HttpGet("{id:long}")]
@@ -103,7 +105,7 @@ namespace WePayServer.Controllers
             for (int i = 0; i < 20; i++)
             {
                 //await Task.Delay(300);
-                wePayOrder.OrderCode = "123456";
+                wePayOrder.OrderCode = wePayOrder.OrderId;
                 if (!string.IsNullOrWhiteSpace(wePayOrder.OrderCode))
                 {
                     await _context.SaveChangesAsync();
