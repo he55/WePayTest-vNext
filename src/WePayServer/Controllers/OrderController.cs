@@ -45,9 +45,11 @@ namespace WePayServer.Controllers
             return this.ResultSuccess();
         }
 
-        [HttpPost("/postorder")]
-        public async Task<ResultModel> PostOrder(WePayMessageDto messageDto)
+        [HttpPost("/postMessage")]
+        public async Task<ResultModel> PostOrder(List<WePayMessageDto> messageDtos)
         {
+            foreach (WePayMessageDto messageDto in messageDtos)
+            {
             Dictionary<string, string> messageInfo = WeChatService.GetMessageInfo(messageDto.Message);
             string orderId = messageInfo["detail_content_value_1"];
 
@@ -58,8 +60,11 @@ namespace WePayServer.Controllers
                 order.OrderMessage = messageDto.Message;
                 await _context.SaveChangesAsync();
             }
+            }
 
-            return this.ResultSuccess();
+            long ts=_context.WePayOrders.Max(x=>x.CreateTime);
+
+            return this.ResultSuccess(ts);
         }
 
         [HttpGet("{id:long}")]
@@ -104,8 +109,7 @@ namespace WePayServer.Controllers
 
             for (int i = 0; i < 20; i++)
             {
-                //await Task.Delay(300);
-                wePayOrder.OrderCode = wePayOrder.OrderId;
+                await Task.Delay(300);
                 if (!string.IsNullOrWhiteSpace(wePayOrder.OrderCode))
                 {
                     await _context.SaveChangesAsync();
