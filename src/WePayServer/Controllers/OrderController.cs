@@ -46,7 +46,7 @@ namespace WePayServer.Controllers
         }
 
         [HttpPost("/postMessage")]
-        public async Task<ResultModel> PostOrder(List<WePayMessageDto> messageDtos)
+        public async Task<ResultModel> PostMessage(List<WePayMessageDto> messageDtos)
         {
             foreach (WePayMessageDto messageDto in messageDtos)
             {
@@ -58,11 +58,15 @@ namespace WePayServer.Controllers
             {
                 order.IsPay = true;
                 order.OrderMessage = messageDto.Message;
+                order.PayTime=messageDto.CreateTime;
                 await _context.SaveChangesAsync();
             }
             }
 
-            long ts=_context.WePayOrders.Max(x=>x.CreateTime);
+            long ts=0;
+            if(_context.WePayOrders.Count()>0){
+           ts= _context.WePayOrders.Max(x=>x.CreateTime);
+            }
 
             return this.ResultSuccess(ts);
         }

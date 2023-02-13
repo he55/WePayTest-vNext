@@ -77,6 +77,7 @@ namespace WePayServer
         public string OrderCode { get; set; } = "";
         public string OrderMessage { get; set; } = "";
         public bool IsPay { get; set; }
+        public long PayTime { get; set; }
         [NotMapped]
         public bool IsSend { get; set; }
     }
