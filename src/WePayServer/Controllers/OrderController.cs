@@ -65,7 +65,7 @@ namespace WePayServer.Controllers
 
             long ts=0;
             if(_context.WePayOrders.Count()>0){
-           ts= _context.WePayOrders.Max(x=>x.CreateTime);
+           ts= _context.WePayOrders.Max(x=>x.PayTime);
             }
 
             return this.ResultSuccess(ts);
