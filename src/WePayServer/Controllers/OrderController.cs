@@ -11,7 +11,7 @@ namespace WePayServer.Controllers
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
-        private static readonly List<WePayOrder> WePayOrders = new List<WePayOrder>();
+        private static readonly List<WePayOrder> Orders = new List<WePayOrder>();
 
         private readonly WePayContext _context;
 
@@ -23,7 +23,7 @@ namespace WePayServer.Controllers
         [HttpGet("/getOrderTask")]
         public List<WePayOrder> GetOrderTask()
         {
-            List<WePayOrder> wePayOrders = WePayOrders.Where(x => !x.IsSend)
+            List<WePayOrder> wePayOrders = Orders.Where(x => !x.IsSend)
                 .OrderBy(x => x.Id)
                 .ToList();
 
@@ -35,11 +35,11 @@ namespace WePayServer.Controllers
         [HttpPost("/postOrderTask")]
         public ResultModel PostOrderTask(OrderCodeDto orderCodeDto)
         {
-            WePayOrder wePayOrder = WePayOrders.FirstOrDefault(x => x.Id == orderCodeDto.Id);
+            WePayOrder wePayOrder = Orders.FirstOrDefault(x => x.Id == orderCodeDto.Id);
             if (wePayOrder != null)
             {
                 wePayOrder.OrderCode = orderCodeDto.OrderCode;
-                WePayOrders.Remove(wePayOrder);
+                Orders.Remove(wePayOrder);
             }
 
             return this.ResultSuccess();
@@ -109,7 +109,7 @@ namespace WePayServer.Controllers
             _context.WePayOrders.Add(wePayOrder);
             await _context.SaveChangesAsync();
 
-            WePayOrders.Add(wePayOrder);
+            Orders.Add(wePayOrder);
 
             for (int i = 0; i < 20; i++)
             {
