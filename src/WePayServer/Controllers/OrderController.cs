@@ -46,7 +46,7 @@ namespace WePayServer.Controllers
         }
 
         [HttpPost("/postMessage")]
-        public async Task<ResultModel> PostMessage(List<WePayMessageDto> messageDtos)
+        public async Task<long> PostMessage(List<WePayMessageDto> messageDtos)
         {
             foreach (WePayMessageDto messageDto in messageDtos)
             {
@@ -63,12 +63,10 @@ namespace WePayServer.Controllers
             }
             }
 
-            long ts=0;
-            if(_context.WePayOrders.Count()>0){
-           ts= _context.WePayOrders.Max(x=>x.PayTime);
+            if(_context.WePayOrders.Count()==0){
+                return 0;
             }
-
-            return this.ResultSuccess(ts);
+            return _context.WePayOrders.Max(x=>x.PayTime);
         }
 
         [HttpGet("{id:long}")]
