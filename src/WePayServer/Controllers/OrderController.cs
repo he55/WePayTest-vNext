@@ -66,36 +66,7 @@ namespace WePayServer.Controllers
             {
                 Dictionary<string, string> messageInfo = WeChatService.GetMessageInfo(messageDto.Message);
                 string orderId = messageInfo["detail_content_value_1"];
-
-                WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.OrderId == orderId);
-                if (order != null)
-                {
-                    if (order.OrderType == 0)
-                    {
-                        if (!order.IsPay)
-                        {
-                            order.IsPay = true;
-                            order.OrderMessage = messageDto.Message;
-                            order.PayTime = messageDto.CreateTime;
-                            await _context.SaveChangesAsync();
-                        }
-                    }
-                    else
-                    {
-                        WePayOrder wePayOrder = new WePayOrder
-                        {
-                            OrderId = orderId,
-                            OrderType = 1,
-                            OrderAmount = -1,
-                            IsPay = true,
-                            PayTime = messageDto.CreateTime
-                        };
-
-                        _context.WePayOrders.Add(wePayOrder);
-                        await _context.SaveChangesAsync();
-                    }
-                }
-                else
+                if (orderId.EndsWith("!"))
                 {
                     WePayOrder wePayOrder = new WePayOrder
                     {
@@ -108,6 +79,18 @@ namespace WePayServer.Controllers
 
                     _context.WePayOrders.Add(wePayOrder);
                     await _context.SaveChangesAsync();
+                }
+                else
+                {
+
+                    WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.OrderId == orderId && !x.IsPay);
+                    if (order != null)
+                    {
+                        order.IsPay = true;
+                        order.OrderMessage = messageDto.Message;
+                        order.PayTime = messageDto.CreateTime;
+                        await _context.SaveChangesAsync();
+                    }
                 }
             }
 
