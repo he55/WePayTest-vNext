@@ -73,6 +73,8 @@ namespace WePayServer
     public class WePayOrder : ModelBase
     {
         public string OrderId { get; set; } = "";
+        /// 0 动态 1 静态
+        public int OrderType { get; set; }
         public decimal OrderAmount { get; set; }
         public string OrderCode { get; set; } = "";
         public string OrderMessage { get; set; } = "";
