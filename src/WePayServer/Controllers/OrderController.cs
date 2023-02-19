@@ -26,7 +26,10 @@ namespace WePayServer.Controllers
                 .OrderBy(x => x.Id)
                 .ToList();
 
-            wePayOrders.ForEach(x => x.IsSend = true);
+            foreach (WePayOrder item in wePayOrders)
+            {
+                item.IsSend = true;
+            }
 
             return wePayOrders;
         }
@@ -44,6 +47,18 @@ namespace WePayServer.Controllers
             return this.ResultSuccess();
         }
 
+        [HttpGet("/getMaxPayTime")]
+        public async Task<long> GetMaxPayTime(string orderId)
+        {
+            WePayOrder order = await _context.WePayOrders.OrderByDescending(x => x.PayTime)
+                .FirstOrDefaultAsync(x => x.OrderId == orderId);
+            if (order == null)
+            {
+                return 0;
+            }
+            return order.PayTime;
+        }
+
         [HttpPost("/postMessage")]
         public async Task<long> PostMessage(List<WePayMessageDto> messageDtos)
         {
@@ -55,9 +70,43 @@ namespace WePayServer.Controllers
                 WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.OrderId == orderId);
                 if (order != null)
                 {
-                    order.IsPay = true;
-                    order.OrderMessage = messageDto.Message;
-                    order.PayTime = messageDto.CreateTime;
+                    if (order.OrderType == 0)
+                    {
+                        if (!order.IsPay)
+                        {
+                            order.IsPay = true;
+                            order.OrderMessage = messageDto.Message;
+                            order.PayTime = messageDto.CreateTime;
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    else
+                    {
+                        WePayOrder wePayOrder = new WePayOrder
+                        {
+                            OrderId = orderId,
+                            OrderType = 1,
+                            OrderAmount = -1,
+                            IsPay = true,
+                            PayTime = messageDto.CreateTime
+                        };
+
+                        _context.WePayOrders.Add(wePayOrder);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    WePayOrder wePayOrder = new WePayOrder
+                    {
+                        OrderId = orderId,
+                        OrderType = 1,
+                        OrderAmount = -1,
+                        IsPay = true,
+                        PayTime = messageDto.CreateTime
+                    };
+
+                    _context.WePayOrders.Add(wePayOrder);
                     await _context.SaveChangesAsync();
                 }
             }
