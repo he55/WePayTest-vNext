@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WePayServer.Models;
 
 namespace WePayServer.Controllers
 {
@@ -50,23 +49,24 @@ namespace WePayServer.Controllers
         {
             foreach (WePayMessageDto messageDto in messageDtos)
             {
-            Dictionary<string, string> messageInfo = WeChatService.GetMessageInfo(messageDto.Message);
-            string orderId = messageInfo["detail_content_value_1"];
+                Dictionary<string, string> messageInfo = WeChatService.GetMessageInfo(messageDto.Message);
+                string orderId = messageInfo["detail_content_value_1"];
 
-            WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.OrderId == orderId);
-            if (order != null)
+                WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.OrderId == orderId);
+                if (order != null)
+                {
+                    order.IsPay = true;
+                    order.OrderMessage = messageDto.Message;
+                    order.PayTime = messageDto.CreateTime;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            if (_context.WePayOrders.Count() == 0)
             {
-                order.IsPay = true;
-                order.OrderMessage = messageDto.Message;
-                order.PayTime=messageDto.CreateTime;
-                await _context.SaveChangesAsync();
-            }
-            }
-
-            if(_context.WePayOrders.Count()==0){
                 return 0;
             }
-            return _context.WePayOrders.Max(x=>x.PayTime);
+            return _context.WePayOrders.Max(x => x.PayTime);
         }
 
         [HttpGet("{id:long}")]

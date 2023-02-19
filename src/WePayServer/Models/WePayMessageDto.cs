@@ -1,4 +1,4 @@
-﻿namespace WePayServer.Models
+﻿namespace WePayServer
 {
     public class WePayMessageDto
     {
