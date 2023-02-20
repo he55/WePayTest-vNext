@@ -56,7 +56,7 @@ namespace WePayServer
             {
                 x.ToTable("Order");
                 x.HasIndex(m => m.Id).IsUnique();
-                x.HasIndex(m => m.OrderId).IsUnique();
+                x.HasIndex(m => m.OrderId);
                 x.HasQueryFilter(m => !m.IsDeleted);
             });
         }
@@ -73,8 +73,7 @@ namespace WePayServer
     public class WePayOrder : ModelBase
     {
         public string OrderId { get; set; } = "";
-        /// 0 动态 1 静态
-        public int OrderType { get; set; }
+        public int OrderType { get; set; } // 0 自定义金额  1 固定金额
         public decimal OrderAmount { get; set; }
         public string OrderCode { get; set; } = "";
         public string OrderMessage { get; set; } = "";
