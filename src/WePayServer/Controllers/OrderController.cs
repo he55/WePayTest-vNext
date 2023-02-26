@@ -47,8 +47,8 @@ namespace WePayServer.Controllers
             return this.ResultSuccess();
         }
 
-        [HttpGet("/getMaxPayTime")]
-        public async Task<long> GetMaxPayTime(string orderId)
+        [HttpGet("/getLastPayTime")]
+        public async Task<long> GetLastPayTime(string orderId)
         {
             WePayOrder order = await _context.WePayOrders.OrderByDescending(x => x.PayTime)
                 .FirstOrDefaultAsync(x => x.OrderId == orderId);
