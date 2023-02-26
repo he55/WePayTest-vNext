@@ -68,21 +68,24 @@ namespace WePayServer.Controllers
                 string orderId = messageInfo["detail_content_value_1"];
                 if (orderId.EndsWith("!"))
                 {
-                    WePayOrder wePayOrder = new WePayOrder
+                    int count = await _context.WePayOrders.CountAsync(x => x.OrderId == orderId && x.PayTime == messageDto.CreateTime);
+                    if (count == 0)
                     {
-                        OrderId = orderId,
-                        OrderType = 1,
-                        OrderAmount = -1,
-                        IsPay = true,
-                        PayTime = messageDto.CreateTime
-                    };
+                        WePayOrder wePayOrder = new WePayOrder
+                        {
+                            OrderId = orderId,
+                            OrderType = 1,
+                            OrderAmount = -1,
+                            IsPay = true,
+                            PayTime = messageDto.CreateTime
+                        };
 
-                    _context.WePayOrders.Add(wePayOrder);
-                    await _context.SaveChangesAsync();
+                        _context.WePayOrders.Add(wePayOrder);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 else
                 {
-
                     WePayOrder order = await _context.WePayOrders.FirstOrDefaultAsync(x => x.OrderId == orderId && !x.IsPay);
                     if (order != null)
                     {
