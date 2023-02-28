@@ -151,10 +151,7 @@ void setup() {
   // will be anonymous AP (wm.autoConnect()) then goes into a blocking loop
   // awaiting configuration and will return success result
 
-  bool res;
-  // res = wm.autoConnect(); // auto generated AP name from chipid
-  // res = wm.autoConnect("AutoConnectAP"); // anonymous ap
-  res = wm.autoConnect("ESP8266", "password"); // password protected ap
+  bool res = wm.autoConnect("ESP8266", "password"); // password protected ap
 
   if (!res) {
     Serial.println("Failed to connect");
@@ -164,11 +161,8 @@ void setup() {
     Serial.println("connected...yeey :)");
 
     server.on("/", HTTP_GET, handleRoot);
-
     server.on("/saveurl/", HTTP_POST, handleForm);
-
     server.onNotFound(handleNotFound);
-
     server.begin();
     Serial.println("HTTP server started");
   }
