@@ -93,7 +93,8 @@ void getPayState()
 
     Serial.print("[HTTP] begin...\n");
     if (http.begin(client, pUrl))
-    { // HTTP
+    {
+      // HTTP
       Serial.printf("[HTTP] GET %s ...\n", pUrl.c_str());
 
       // start connection and send HTTP header
@@ -164,10 +165,7 @@ void setup()
   // if empty will auto generate SSID, if password is blank it will be anonymous AP (wm.autoConnect())
   // then goes into a blocking loop awaiting configuration and will return success result
 
-  bool res;
-  // res = wm.autoConnect(); // auto generated AP name from chipid
-  // res = wm.autoConnect("AutoConnectAP"); // anonymous ap
-  res = wm.autoConnect("ESP8266", "password"); // password protected ap
+  bool res = wm.autoConnect("ESP8266", "password"); // password protected ap
 
   if (!res)
   {
@@ -180,11 +178,8 @@ void setup()
     Serial.println("connected...yeey :)");
 
     server.on("/", HTTP_GET, handleRoot);
-
     server.on("/saveurl/", HTTP_POST, handleForm);
-
     server.onNotFound(handleNotFound);
-
     server.begin();
     Serial.println("HTTP server started");
   }
