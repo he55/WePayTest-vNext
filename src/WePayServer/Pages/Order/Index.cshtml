@@ -26,6 +26,9 @@
                 支付状态
             </th>
             <th>
+                支付时间
+            </th>
+            <th>
                 创建时间
             </th>
             <th></th>
@@ -62,11 +65,28 @@
                     }
                 </td>
                 <td>
+                    @if (item.PayTime == 0)
+                    {
+                        @("-")
+                    }
+                    else
+                    {
+                    @DateTimeOffset.FromUnixTimeSeconds(item.PayTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
+                    }
+                </td>
+                <td>
                     @DateTimeOffset.FromUnixTimeMilliseconds(item.CreateTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
                 </td>
                 <td>
-                    <a asp-page="./Details" asp-route-id="@item.Id">明细</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.Id">删除</a>
+                    @if (item.OrderType == 0)
+                    {
+                        <a asp-page="./Details" asp-route-id="@item.Id">明细</a>
+                    }
+                    else
+                    {
+                    <a asp-page="./Details2" asp-route-id="@item.OrderId">明细</a> 
+                    }
+                   | <a asp-page="./Delete" asp-route-id="@item.Id">删除</a>
                 </td>
             </tr>
         }

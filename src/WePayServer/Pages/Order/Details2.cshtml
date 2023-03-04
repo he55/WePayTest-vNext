@@ -2,13 +2,13 @@
 @model WePayServer.Pages.Order.Details2Model
 
 @{
-    ViewData["Title"] = "订单";
+    ViewData["Title"] = "订单明细";
 }
 
-<h1>订单</h1>
+<h1>订单明细</h1>
 
 <p>
-    <a asp-page="Create">创建订单</a>
+    <a asp-page="./Index">返回列表</a>
 </p>
 <table class="table">
     <thead>
@@ -20,13 +20,10 @@
                 订单金额
             </th>
             <th>
-                Code
-            </th>
-            <th>
                 支付状态
             </th>
             <th>
-                创建时间
+                支付时间
             </th>
             <th></th>
         </tr>
@@ -42,16 +39,6 @@
                     @item.OrderAmount.ToString("F2")
                 </td>
                 <td>
-                    @if (!string.IsNullOrEmpty(item.OrderCode))
-                    {
-                        <span style="color:green;">存在</span>
-                    }
-                    else
-                    {
-                        <span>不存在</span>
-                    }
-                </td>
-                <td>
                     @if (item.IsPay)
                     {
                         <span style="color:green;">已支付</span>
@@ -62,7 +49,7 @@
                     }
                 </td>
                 <td>
-                    @DateTimeOffset.FromUnixTimeMilliseconds(item.CreateTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
+                    @DateTimeOffset.FromUnixTimeSeconds(item.PayTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
                 </td>
                 <td>
                     <a asp-page="./Details" asp-route-id="@item.Id">明细</a> |

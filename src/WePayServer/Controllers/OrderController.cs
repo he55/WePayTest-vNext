@@ -68,13 +68,15 @@ namespace WePayServer.Controllers
                 string orderId = messageInfo["detail_content_value_1"];
                 if (orderId.EndsWith("!"))
                 {
+                    int count2 = await _context.WePayOrders.CountAsync(x => x.OrderId == orderId );
                     int count = await _context.WePayOrders.CountAsync(x => x.OrderId == orderId && x.PayTime == messageDto.CreateTime);
-                    if (count == 0)
+                    if (count2==0||count == 0)
                     {
                         WePayOrder order = new WePayOrder
                         {
                             OrderId = orderId,
                             OrderType = 1,
+                            IsSub=count2!=0,
                             OrderAmount = -1,
                             IsPay = true,
                             PayTime = messageDto.CreateTime

@@ -74,6 +74,7 @@ namespace WePayServer
     {
         public string OrderId { get; set; } = "";
         public int OrderType { get; set; } // 0 自定义金额  1 固定金额
+        public bool IsSub { get; set; }
         public decimal OrderAmount { get; set; }
         public string OrderCode { get; set; } = "";
         public string OrderMessage { get; set; } = "";
