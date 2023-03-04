@@ -14,11 +14,11 @@ namespace WePayServer.Pages.Order
             _context = context;
         }
 
-        public IList<WePayOrder> WePayOrder { get; set; }
+        public IList<WePayOrder> Orders { get; set; }
 
         public async Task OnGetAsync()
         {
-            WePayOrder = await _context.WePayOrders.ToListAsync();
+            Orders = await _context.WePayOrders.ToListAsync();
         }
     }
 }

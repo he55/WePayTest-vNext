@@ -22,26 +22,26 @@ namespace WePayServer.Controllers
         [HttpGet("/getOrderTask")]
         public List<WePayOrder> GetOrderTask()
         {
-            List<WePayOrder> wePayOrders = Orders.Where(x => !x.IsSend)
+            List<WePayOrder> orders = Orders.Where(x => !x.IsSend)
                 .OrderBy(x => x.Id)
                 .ToList();
 
-            foreach (WePayOrder item in wePayOrders)
+            foreach (WePayOrder item in orders)
             {
                 item.IsSend = true;
             }
 
-            return wePayOrders;
+            return orders;
         }
 
         [HttpPost("/postOrderTask")]
         public ResultModel PostOrderTask(OrderCodeDto orderCodeDto)
         {
-            WePayOrder wePayOrder = Orders.FirstOrDefault(x => x.Id == orderCodeDto.Id);
-            if (wePayOrder != null)
+            WePayOrder order = Orders.FirstOrDefault(x => x.Id == orderCodeDto.Id);
+            if (order != null)
             {
-                wePayOrder.OrderCode = orderCodeDto.OrderCode;
-                Orders.Remove(wePayOrder);
+                order.OrderCode = orderCodeDto.OrderCode;
+                Orders.Remove(order);
             }
 
             return this.ResultSuccess();
@@ -71,7 +71,7 @@ namespace WePayServer.Controllers
                     int count = await _context.WePayOrders.CountAsync(x => x.OrderId == orderId && x.PayTime == messageDto.CreateTime);
                     if (count == 0)
                     {
-                        WePayOrder wePayOrder = new WePayOrder
+                        WePayOrder order = new WePayOrder
                         {
                             OrderId = orderId,
                             OrderType = 1,
@@ -80,7 +80,7 @@ namespace WePayServer.Controllers
                             PayTime = messageDto.CreateTime
                         };
 
-                        _context.WePayOrders.Add(wePayOrder);
+                        _context.WePayOrders.Add(order);
                         await _context.SaveChangesAsync();
                     }
                 }
@@ -116,41 +116,41 @@ namespace WePayServer.Controllers
         }
 
         [HttpPost]
-        public async Task<ResultModel> CreateOrderAsync(WePayOrderDto order)
+        public async Task<ResultModel> CreateOrderAsync(WePayOrderDto dto)
         {
-            if (order.OrderAmount < 0.01m)
+            if (dto.OrderAmount < 0.01m)
             {
                 return this.ResultFail("参数错误，金额不能小于 0.01 元");
             }
 
-            if (string.IsNullOrWhiteSpace(order.OrderId))
+            if (string.IsNullOrWhiteSpace(dto.OrderId))
             {
                 return this.ResultFail("参数错误，订单号不能为空");
             }
 
-            if (await _context.WePayOrders.AnyAsync(x => x.OrderId == order.OrderId))
+            if (await _context.WePayOrders.AnyAsync(x => x.OrderId == dto.OrderId))
             {
                 return this.ResultFail("订单号已经存在");
             }
 
-            WePayOrder wePayOrder = new WePayOrder
+            WePayOrder order = new WePayOrder
             {
-                OrderId = order.OrderId,
-                OrderAmount = order.OrderAmount
+                OrderId = dto.OrderId,
+                OrderAmount = dto.OrderAmount
             };
 
-            _context.WePayOrders.Add(wePayOrder);
+            _context.WePayOrders.Add(order);
             await _context.SaveChangesAsync();
 
-            Orders.Add(wePayOrder);
+            Orders.Add(order);
 
             for (int i = 0; i < 20; i++)
             {
                 await Task.Delay(300);
-                if (!string.IsNullOrWhiteSpace(wePayOrder.OrderCode))
+                if (!string.IsNullOrWhiteSpace(order.OrderCode))
                 {
                     await _context.SaveChangesAsync();
-                    return this.ResultSuccess(wePayOrder);
+                    return this.ResultSuccess(order);
                 }
             }
             return this.ResultFail("订单生成失败");
