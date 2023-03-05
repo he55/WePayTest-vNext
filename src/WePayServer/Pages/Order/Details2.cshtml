@@ -52,7 +52,6 @@
                     @DateTimeOffset.FromUnixTimeSeconds(item.PayTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
                 </td>
                 <td>
-                    <a asp-page="./Details" asp-route-id="@item.Id">明细</a> |
                     <a asp-page="./Delete" asp-route-id="@item.Id">删除</a>
                 </td>
             </tr>
