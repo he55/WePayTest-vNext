@@ -21,6 +21,7 @@ namespace WePayServer.Pages.Order
         {
             Orders = await _context.WePayOrders
                 .Where(x => x.OrderId == id)
+                .OrderByDescending(x => x.PayTime)
                 .ToListAsync();
         }
     }
