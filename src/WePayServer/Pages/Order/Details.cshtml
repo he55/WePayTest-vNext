@@ -41,7 +41,7 @@
                 <span>未支付</span>
             }
         </dd>
-          <dt class="col-sm-2">
+        <dt class="col-sm-2">
             支付时间
         </dt>
         <dd class="col-sm-10">
@@ -51,7 +51,7 @@
             }
             else
             {
-            @DateTimeOffset.FromUnixTimeSeconds(Model.Order.PayTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
+                @DateTimeOffset.FromUnixTimeSeconds(Model.Order.PayTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
             }
         </dd>
         <dt class="col-sm-2">

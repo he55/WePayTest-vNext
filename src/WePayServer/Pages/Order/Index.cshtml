@@ -71,21 +71,24 @@
                     }
                     else
                     {
-                    @DateTimeOffset.FromUnixTimeSeconds(item.PayTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
+                        @DateTimeOffset.FromUnixTimeSeconds(item.PayTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
                     }
                 </td>
                 <td>
                     @DateTimeOffset.FromUnixTimeMilliseconds(item.CreateTime).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
                 </td>
-                @if(item.OrderType==0){
- <td>
-                    <a asp-page="./Details" asp-route-id="@item.Id">明细</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.Id">删除</a>
-                </td>
-                }else{
- <td>
-                    <a asp-page="./Details2" asp-route-id="@item.OrderId">明细</a> 
-                </td>
+                @if (item.OrderType == 0)
+                {
+                    <td>
+                        <a asp-page="./Details" asp-route-id="@item.Id">明细</a> |
+                        <a asp-page="./Delete" asp-route-id="@item.Id">删除</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-page="./Details2" asp-route-id="@item.OrderId">明细</a>
+                    </td>
                 }
             </tr>
         }

@@ -20,7 +20,7 @@ namespace WePayServer.Pages.Order
         public async Task OnGetAsync()
         {
             Orders = await _context.WePayOrders
-                .Where(x=>!x.IsSub)
+                .Where(x => !x.IsSub)
                 .ToListAsync();
         }
     }
