@@ -8,6 +8,9 @@
 #define DEFINT 5000
 #define PLED LED_BUILTIN
 
+String payurl;
+long interval = DEFINT;
+
 ESP8266WebServer server(80);
 String postForms = "<html>\
   <head>\
@@ -28,26 +31,21 @@ String postForms = "<html>\
   </body>\
 </html>";
 
-String pUrl;
-long interval = DEFINT;
-
 void handleRoot() {
   String html = postForms;
-  html.replace("{{url}}", pUrl);
-  String str = String(interval);
-  html.replace("{{interval}}", str);
+  html.replace("{{url}}", payurl);
+  html.replace("{{interval}}", String(interval));
   server.send(200, "text/html", html);
 }
 
 void handleForm() {
-  pUrl = server.arg("url");
-  String str = server.arg("interval");
-  long val = str.toInt();
+  payurl = server.arg("url");
+  long val = server.arg("interval").toInt();
   interval = val > 0 ? val : DEFINT;
 
   File file = LittleFS.open(URLPATH, "w");
   if (file) {
-    file.print(pUrl);
+    file.print(payurl);
     file.print("\n");
     file.print(interval);
     file.close();
@@ -87,7 +85,7 @@ void payLedBlink() {
 }
 
 void getPayState() {
-  if (pUrl.isEmpty()) {
+  if (payurl.isEmpty()) {
     return;
   }
 
@@ -95,8 +93,8 @@ void getPayState() {
   HTTPClient http;
 
   Serial.print("[HTTP] begin...\n");
-  if (http.begin(client, pUrl)) {  // HTTP
-    Serial.printf("[HTTP] GET %s ...\n", pUrl.c_str());
+  if (http.begin(client, payurl)) {  // HTTP
+    Serial.printf("[HTTP] GET %s ...\n", payurl.c_str());
 
     // start connection and send HTTP header
     int httpCode = http.GET();
@@ -140,9 +138,8 @@ void setup() {
 
   File file;
   if (LittleFS.exists(URLPATH) && (file = LittleFS.open(URLPATH, "r"))) {
-    pUrl = file.readStringUntil('\n');
-    String str = file.readStringUntil('\n');
-    interval = str.toInt();
+    payurl = file.readStringUntil('\n');
+    interval = file.readStringUntil('\n').toInt();
     file.close();
   }
 
