@@ -20,18 +20,23 @@ namespace WePayServer.Controllers
         }
 
         [HttpGet("/getOrderTask")]
-        public List<WePayOrder> GetOrderTask()
+        public List<OrderCodeDto> GetOrderTask()
         {
-            List<WePayOrder> orders = Orders.Where(x => !x.IsSend)
-                .OrderBy(x => x.Id)
-                .ToList();
+            List<OrderCodeDto> dtos = new List<OrderCodeDto>();
+            List<WePayOrder> orders = Orders.Where(x => !x.IsSend).ToList();
 
             foreach (WePayOrder item in orders)
             {
                 item.IsSend = true;
+
+                dtos.Add(new OrderCodeDto {
+                    Id=item.Id,
+                    OrderId=item.OrderId,
+                    OrderAmount=item.OrderAmount
+                });
             }
 
-            return orders;
+            return dtos;
         }
 
         [HttpPost("/postOrderTask")]
